@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="app_name">TawselApp</string>    
+<string name="facebook_app_id">1262992257907518</string>
+<string name="fb_login_protocol_scheme">fb21be31cdc86ec78dd726607e34a44738</string>
+<string name="facebook_client_token">cf678086e69a0e0813d5e5558266e789</string>
+
+
+</resources>

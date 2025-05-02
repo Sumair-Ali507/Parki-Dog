@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1087343977253",
+    "project_id": "parki-dog",
+    "storage_bucket": "parki-dog.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087343977253:android:e93e7bf81ed9079166f0cc",
+        "android_client_info": {
+          "package_name": "com.example.parki_dog"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1087343977253-8hkjpk36ggmshda5odpbgioo8g648ttm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.parki_dog",
+            "certificate_hash": "da0cc34fa18c47617ddbbf3a7e687c4cdae12d1c"
+          }
+        },
+        {
+          "client_id": "1087343977253-8rkbvakuurcpkcbh13p8tg0fmcpmp8ea.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCph2SBF_yzZH5ktPtTmwQWVJVhr3Zf10M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1087343977253-8rkbvakuurcpkcbh13p8tg0fmcpmp8ea.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1087343977253-6so3dh0jdl7nh7ir7l821a2aqh2hq99f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.parkiDog"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
