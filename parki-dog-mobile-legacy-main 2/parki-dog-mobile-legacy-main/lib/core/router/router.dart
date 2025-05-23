@@ -31,7 +31,9 @@ import 'package:parki_dog/features/map/view/pages/map_screen.dart';
 import '../../features/auth/view/pages/forget_password.dart';
 
 class AppRouter {
-  static const appScreens = [HomeScreen(), MapScreen()];
+  static const appScreens = [HomeScreen(
+    parks: [],
+  ), MapScreen()];
   final NavigationCubit _navigationCubit = NavigationCubit();
   final AccountCubit _accountCubit = AccountCubit();
 

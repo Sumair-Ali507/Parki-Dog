@@ -68,6 +68,10 @@ dependencies:
   # awesome_notifications_core: ^0.8.1
   # awesome_notifications: any
   sign_in_with_apple: ^6.1.4
+  flutter_screenutil: ^5.9.0
+  auto_size_text: ^3.0.0
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -82,9 +86,9 @@ flutter:
 
   assets:
     - lib/core/language/
+    - assets/translations/
     - assets/images/
-    - assets/images/forget_password.svg
-    - assets/icons/
+    - assets/images/icons/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

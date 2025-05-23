@@ -33,24 +33,36 @@ class Skeleton extends StatelessWidget {
       child: BlocBuilder<LangCubit, LangState>(builder: (context, state) {
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          body: BlocConsumer<NavigationCubit, NavigationState>(
-            bloc: context.read<NavigationCubit>()..changeIndex(0),
-            listenWhen: (previous, current) => current is NavigationIndex && current.index == 2,
-            listener: (context, state) {},
-            buildWhen: (previous, current) => current is NavigationIndex, //&& current.index != 2,
-            builder: (context, state) {
-              return IndexedStack(
-                index: (state as NavigationIndex).index,
-                children: const [
-                  HomeScreen(),
-                  MapScreen(),
-                  ShopScreen1(),
-                  //ShopScreen(),
-                ],
-              );
-            },
+          body: Column(
+            children: [
+              // Top safe area black container
+              Container(
+                color: Colors.black,
+                height: MediaQuery.of(context).padding.top,
+              ),
+              Expanded(
+                child: BlocConsumer<NavigationCubit, NavigationState>(
+                    bloc: context.read<NavigationCubit>()..changeIndex(0),
+                    listenWhen: (previous, current) =>
+                    current is NavigationIndex && current.index == 2,
+                    listener: (context, state) {},
+                    buildWhen: (previous, current) => current is NavigationIndex,
+                    builder: (context, state) {
+                      return IndexedStack(
+                        index: (state as NavigationIndex).index,
+                        children: const [
+                          HomeScreen(
+                            parks: [],
+                          ),
+                          MapScreen(),
+                          ShopScreen1(),
+                        ],
+                      );
+                    }),
+              ),
+            ],
           ),
-          bottomNavigationBar: const NavBar(),
+          bottomNavigationBar: const NavBar(), // Our custom navigation bar
           extendBody: true,
         );
       }),

@@ -15,6 +15,10 @@ import 'package:parki_dog/features/map/cubit/map_cubit.dart';
 import 'package:parki_dog/features/park/data/check_in_model.dart';
 import 'package:parki_dog/features/park/view/widgets/time_picker.dart';
 
+import '../../../../core/shared_widgets/svg_icon.dart';
+import '../../../../core/utils/assets_manager.dart';
+import '../../../../core/utils/colors_manager.dart';
+import '../../../../core/utils/values_manager.dart';
 import '../../../lang/lang_cubit.dart';
 import '../../../lang/lang_state.dart';
 import '../../../park/data/park_repository.dart';
@@ -31,7 +35,6 @@ class CurrentCheckIn extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.data?.data() != null) {
               final dog = DogModel.fromMap(snapshot.data?.data() as Map<String, dynamic>).copyWith(id: id);
-
               GetIt.instance.registerSingleton<DogModel>(dog);
             }
 
@@ -56,133 +59,209 @@ class CurrentCheckIn extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Container(
-                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
-                            color: const Color(0xfff2f2f2),
+                            color: const Color(0xffF8F5FF), // Updated color
                           ),
                           child: Column(
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      CustomIcons.mapPin,
-                                      const SizedBox(width: 8),
-                                      Column(
+                              // Current Location and Leaving Time Row
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: Row(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            'Current Location'.tr(),
-                                            style: const TextStyle(
-                                                fontSize: 14, fontWeight: FontWeight.w400, color: AppColors.primary),
-                                          ),
-                                          SizedBox(
-                                            width: MediaQuery.of(context).size.width * 0.40,
-                                            child: Text(
-                                              snapshot.data!.parkName,
-                                              style: const TextStyle(
-                                                  fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      CustomIcons.clock,
-                                      const SizedBox(width: 8),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Leaving Time'.tr(),
-                                            style: const TextStyle(
-                                                fontSize: 14, fontWeight: FontWeight.w400, color: AppColors.primary),
-                                          ),
-                                          Text(
-                                            DateFormat.jm().format(snapshot.data!.leaveTime),
-                                            style: const TextStyle(
-                                                fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                              const Divider(height: 24),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      CustomIcons.bulldogLarge,
-                                      const SizedBox(width: 8),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Checked-in Dogs'.tr(),
-                                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                                          ),
-                                          CompactDogs(snapshot.data!.checkedInDogs),
+                                          SvgIcon(
+                                              assetName: ImageAssets.locationPin,
+                                              color: ColorsManager.primaryColor),
+                                          const SizedBox(width: 8),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Current Location'.tr(),
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: AppColors.primary),
+                                              ),
+                                              const SizedBox(height: 3),
+                                              SizedBox(
+                                                width: MediaQuery.of(context).size.width * 0.35,
+                                                child: Text(
+                                                  snapshot.data!.parkName,
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: AppColors.primary),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          )
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                  InkWell(
-                                    onTap: () => Navigator.pushNamed(context, '/home/current-checkin/dogs',
-                                        arguments: snapshot.data!.checkedInDogs),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          'View all'.tr(),
-                                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-                                        ),
-                                        const Icon(
-                                          Icons.chevron_right,
-                                          color: Colors.black,
-                                        ),
-                                      ],
                                     ),
-                                  )
-                                ],
+                                    Flexible(
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const SvgIcon(
+                                              assetName: ImageAssets.clock,
+                                              color: ColorsManager.primaryColor),
+                                          SizedBox(width: AppDouble.d8),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Leaving Time'.tr(),
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: AppColors.primary),
+                                              ),
+                                              const SizedBox(height: 3),
+                                              Text(
+                                                DateFormat.jm().format(snapshot.data!.leaveTime),
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.primary),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                              const Divider(height: 24),
+                              const Divider(
+                                height: 32,
+                                thickness: 1,
+                                color: Color(0xffE5E5E5), // Updated divider color
+                              ),
+                              // Checked-in Dogs Row
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const SvgIcon(
+                                              assetName: ImageAssets.animalLeg,
+                                              color: ColorsManager.primaryColor),
+                                          const SizedBox(width: AppDouble.d8),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Checked-in Dogs'.tr(),
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400
+                                                ),
+                                              ),
+                                              const SizedBox(height: 3),
+                                              Row(
+                                                children: [
+                                                  CompactDogs(snapshot.data!.checkedInDogs),
+                                                  Text(
+                                                    'other dogs'.plural(snapshot.data!.checkedInDogs.length),
+                                                    style: const TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w300
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // ElevatedButton.icon(
+                                    //   style: ElevatedButton.styleFrom(
+                                    //     backgroundColor: const Color(0xffFFEBEB), // Red background
+                                    //     shape: const StadiumBorder(),
+                                    //   ),
+                                    //   onPressed: () => Navigator.pushNamed(
+                                    //       context,
+                                    //       '/home/current-checkin/dogs',
+                                    //       arguments: snapshot.data!.checkedInDogs
+                                    //   ),
+                                    //  // icon: CustomIcons., // You might need to add this icon
+                                    //   label: Text(
+                                    //     'Signal Dogs'.tr(),
+                                    //     style: const TextStyle(
+                                    //       fontSize: 14,
+                                    //       color: Color(0xffFF5A5A), // Red text
+                                    //     ),
+                                    //   ),
+                                    // )
+                                  ],
+                                ),
+                              ),
+                              const Divider(
+                                height: 32,
+                                thickness: 1,
+                                color: Color(0xffE5E5E5), // Updated divider color
+                              ),
+                              // Check Out and Extend Time Buttons
                               Row(
                                 children: [
                                   Expanded(
-                                    child: PushButton(
-                                      text: 'Check out'.tr(),
-                                      onPress: () => _onCheckOut(context, snapshot.data!.parkId),
-                                      height: 40,
-                                      borderRadius: 8,
-                                      fill: false,
-                                      color: Colors.transparent,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      textColor: AppColors.primary,
+                                    child: OutlinedButton(
+                                      onPressed: () => _onCheckOut(context, snapshot.data!.parkId),
+                                      style: OutlinedButton.styleFrom(
+                                        backgroundColor: Colors.transparent,
+                                        shape: const StadiumBorder(),
+                                        side: const BorderSide(
+                                          color: Color(0xffD9D9D9), // Grey border
+                                          width: 1,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                      ),
+                                      child: Text(
+                                        'Check out'.tr(),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(
-                                    child: PushButton(
-                                      text: 'Extend time'.tr(),
-                                      onPress: () =>
-                                          _onExtend(context, snapshot.data!.parkId, snapshot.data!.leaveTime),
-                                      height: 40,
-                                      borderRadius: 8,
-                                      fontSize: 14,
-                                      // fontWeight: FontWeight.w500,
+                                    child: ElevatedButton(
+                                      onPressed: () => _onExtend(
+                                          context,
+                                          snapshot.data!.parkId,
+                                          snapshot.data!.leaveTime
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.primary,
+                                        shape: const StadiumBorder(),
+                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                      ),
+                                      child: Text(
+                                        'Extend time'.tr(),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -198,7 +277,6 @@ class CurrentCheckIn extends StatelessWidget {
                 },
               );
             }
-
             return const SizedBox.shrink();
           });
     });
@@ -215,18 +293,18 @@ class CurrentCheckIn extends StatelessWidget {
     if (leaveTime == null) return;
 
     await context.read<HomeCubit>().extendTime(
-          GetIt.instance.get<DogModel>().id!,
-          parkId,
-          Utils.timeOfDayToDateTime(leaveTime),
-          currentLeaveTime,
-        );
+      GetIt.instance.get<DogModel>().id!,
+      parkId,
+      Utils.timeOfDayToDateTime(leaveTime),
+      currentLeaveTime,
+    );
   }
 
   Future<void> _onCheckOut(BuildContext context, String parkId) async {
     await context.read<HomeCubit>().checkOutDog(
-          GetIt.instance.get<DogModel>().id!,
-          parkId,
-        );
+      GetIt.instance.get<DogModel>().id!,
+      parkId,
+    );
     await ParkRepository.deleteMarker(parkId);
   }
 }
