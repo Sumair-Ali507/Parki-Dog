@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parki_dog/core/services/notifiactions/notification_service.dart';
 import 'package:parki_dog/features/auth/data/auth_repository.dart';
+import 'package:parki_dog/features/chat/view/page/show_user_chats.dart';
 import 'package:parki_dog/features/home/data/park_model.dart';
 import 'package:parki_dog/features/home/view/pages/coming_soon.dart';
 import 'package:parki_dog/features/home/view/pages/tell_feeback.dart';
@@ -63,6 +64,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       [
                         HomeAppBar(
 
+                          chatOnTap: (){
+                           // Navigator.push(context, MaterialPageRoute(builder: (context)=> const AllUserChatsScreen()));
+                          },
+
+                          notificationOnTap: () {
+
+
+                            },
+
                           isRedCircleChat: true,
                           isRedCircleNotification: true,
                         ),
@@ -93,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         const SizedBox(height: AppDouble.d32),
                         const CurrentCheckIn(),
-                        //const ParksNearby(),
+
                         // const SizedBox(height: 16),
                         // const DoggyShoppy(),
                         // const DoggyShoppyWidget(),
@@ -101,8 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         // const GoogleAdBanners(),
                         // const SizedBox(height: 16),
 
-
-                        NearPlacesColumn(parks: widget.parks),
+                        const ParksNearby(),
                         ComingSooon(),
                         const TellFeedBack(),
                         SizedBox(height: MediaQuery.of(context).padding.bottom + 7),

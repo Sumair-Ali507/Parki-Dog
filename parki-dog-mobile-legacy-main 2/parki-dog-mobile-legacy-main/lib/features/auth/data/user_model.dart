@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:parki_dog/features/auth/data/dog_model.dart';
 
 class UserModel {
   final String? id;
@@ -11,6 +12,7 @@ class UserModel {
   final String? lastName;
   final String? phone;
   final String? address;
+  List<DogModel>? ownedDogs;
   final DateTime? dob;
   final String? gender;
   final String? photoUrl;
@@ -20,6 +22,7 @@ class UserModel {
   UserModel({
     this.id,
     this.email,
+    this.ownedDogs,
     this.firstName,
     this.lastName,
     this.phone,
@@ -43,6 +46,7 @@ class UserModel {
     String? photoUrl,
     List<String>? dogs,
     String? userToken,
+  List<DogModel>? ownedDogs,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -56,6 +60,7 @@ class UserModel {
       photoUrl: photoUrl ?? this.photoUrl,
       dogs: dogs ?? this.dogs,
       userToken: userToken ?? this.userToken,
+      ownedDogs: ownedDogs ?? this.ownedDogs,
     );
   }
 
@@ -72,6 +77,7 @@ class UserModel {
       'photoUrl': photoUrl,
       'dogs': dogs,
       'userToken': userToken,
+      'ownedDogs': ownedDogs?.map((dog) => dog.toMap()).toList(),
     };
   }
 
@@ -88,6 +94,7 @@ class UserModel {
       'photoUrl': photoUrl,
       'dogs': dogs,
       'userToken': userToken,
+      'ownedDogs': ownedDogs?.map((dog) => dog.toMap()).toList(),
     };
   }
 
@@ -104,6 +111,11 @@ class UserModel {
       photoUrl: map['photoUrl'] != null ? map['photoUrl'] as String : null,
       dogs: map['dogs'] != null ? List<String>.from((map['dogs'])) : null,
       userToken: map['userToken'] != null ? map['userToken'] as String : null,
+      ownedDogs: map['ownedDogs'] != null
+          ? List<DogModel>.from(
+              (map['ownedDogs'] as List).map((dog) => DogModel.fromMap(dog as Map<String, dynamic>)),
+            )
+          : null,
     );
   }
 
@@ -113,7 +125,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, email: $email, firstName: $firstName, lastName: $lastName, phone: $phone, address: $address, dob: $dob, gender: $gender, photoUrl: $photoUrl, dogs: $dogs, userToken: $userToken)';
+    return 'UserModel(id: $id, email: $email, firstName: $firstName, lastName: $lastName, phone: $phone, address: $address, dob: $dob, gender: $gender, photoUrl: $photoUrl, dogs: $dogs, userToken: $userToken, ownedDogs: $ownedDogs)';
   }
 
   @override
@@ -121,6 +133,7 @@ class UserModel {
     if (identical(this, other)) return true;
 
     return other.id == id &&
+        other.ownedDogs == ownedDogs &&
         other.email == email &&
         other.firstName == firstName &&
         other.lastName == lastName &&
@@ -131,12 +144,15 @@ class UserModel {
         other.photoUrl == photoUrl &&
         other.userToken == userToken &&
         listEquals(other.dogs, dogs);
+
+
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
         email.hashCode ^
+        ownedDogs.hashCode ^
         firstName.hashCode ^
         lastName.hashCode ^
         phone.hashCode ^
@@ -145,5 +161,6 @@ class UserModel {
         gender.hashCode ^
         photoUrl.hashCode ^
         dogs.hashCode;
+
   }
 }

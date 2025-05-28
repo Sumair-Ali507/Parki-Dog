@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/utils/assets_manager.dart';
 
 class ParkRating extends StatelessWidget {
   const ParkRating({super.key, required this.rating, required this.totalRatings});
@@ -26,16 +27,14 @@ class ParkRating extends StatelessWidget {
     return Row(
       children: List.generate(
         5,
-        (index) => index < roundedRating
-            ? const Icon(
-                Icons.star,
-                color: Colors.yellow,
-                size: 16,
-              )
-            : const Icon(
-                Icons.star_border,
-                size: 16,
-              ),
+            (index) => Image.asset(
+          index < roundedRating
+              ? ImageAssets.boneFilled
+              : ImageAssets.boneOutlined,
+          color: index < (rating ?? 0)
+              ? Colors.amber // or your desired filled color
+              : Colors.grey, // or your desired outline color
+        ),
       ),
     );
   }

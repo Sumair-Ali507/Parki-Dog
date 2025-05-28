@@ -12,6 +12,9 @@ import 'package:parki_dog/features/home/view/widgets/park_rating.dart';
 import 'package:parki_dog/features/park/data/park_repository.dart';
 import 'package:parki_dog/features/park/view/pages/park_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
+import '../../../../core/shared_widgets/svg_icon.dart';
+import '../../../../core/utils/assets_manager.dart';
+import '../../../../core/utils/colors_manager.dart';
 import '../../../map/cubit/map_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -99,10 +102,10 @@ class ParkTile extends StatelessWidget {
           ),
         ],
       ),
-      trailing: const Icon(
-        Icons.chevron_right,
-        color: Colors.black,
-      ),
+      trailing: SvgIcon(
+          color: ColorsManager.grey500,
+          assetName: ImageAssets.animalLeg),
+
     );
   }
 }

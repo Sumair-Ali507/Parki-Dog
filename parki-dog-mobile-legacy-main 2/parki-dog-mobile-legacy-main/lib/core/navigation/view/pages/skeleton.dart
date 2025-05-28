@@ -5,6 +5,7 @@ import 'package:parki_dog/core/navigation/view/widgets/nav_bar.dart';
 import 'package:parki_dog/features/home/view/pages/home_screen.dart';
 import 'package:parki_dog/features/map/view/pages/map_screen.dart';
 
+import '../../../../features/account/view/pages/account_screen.dart';
 import '../../../../features/lang/lang_cubit.dart';
 import '../../../../features/lang/lang_state.dart';
 import '../../../../features/shop/view/pages/shop_page.dart';
@@ -55,7 +56,7 @@ class Skeleton extends StatelessWidget {
                             parks: [],
                           ),
                           MapScreen(),
-                          ShopScreen1(),
+                         AccountScreen()
                         ],
                       );
                     }),
