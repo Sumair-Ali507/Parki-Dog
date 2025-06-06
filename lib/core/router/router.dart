@@ -59,11 +59,11 @@ class AppRouter {
       case '/auth/terms':
         return MaterialPageRoute(builder: (_) => const TermsView());
 
-      case '/auth/signup/fill-personal':
-        return MaterialPageRoute(builder: (_) => const FillPersonalScreen());
+      // case '/auth/signup/fill-personal':
+      //   return MaterialPageRoute(builder: (_) => const FillPersonalScreen());
 
-      case '/auth/signup/fill-dog':
-        return MaterialPageRoute(builder: (_) => const FillDogScreen());
+      // case '/auth/signup/fill-dog':
+      //   return MaterialPageRoute(builder: (_) => const FillDogScreen());
 
       case '/auth/signup/fill-unsocial-with':
         return MaterialPageRoute(builder: (_) => FillUnsocialWithScreen());
@@ -84,7 +84,7 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                   value: _accountCubit,
-                  child: const AccountScreen(),
+                  child: AccountScreen(),
                 ));
 
       case '/account/my-dog-info':

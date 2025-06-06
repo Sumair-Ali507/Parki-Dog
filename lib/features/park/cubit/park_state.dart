@@ -39,7 +39,9 @@ final class CheckedInDogsLoaded extends ParkState {
   List<Object> get props => [checkedInDogs];
 }
 
-final class CheckedInDog extends ParkState {}
+final class CheckedInDog extends ParkState {
+  
+}
 
 final class CheckedOutDog extends ParkState {}
 

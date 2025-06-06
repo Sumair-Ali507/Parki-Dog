@@ -4,10 +4,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:parki_dog/core/theme/app_colors.dart';
 import 'package:parki_dog/core/widgets/push_button.dart';
 import 'package:parki_dog/core/widgets/step_progress_bar.dart';
+import 'package:parki_dog/features/auth/data/user_model.dart';
 import 'package:parki_dog/features/auth/view/pages/fill_personal_screen.dart';
 
 class FillUserTypeScreen extends StatefulWidget {
-  const FillUserTypeScreen({super.key});
+  const FillUserTypeScreen({super.key, required this.userModel,required this.password});
+
+  final UserModel userModel;
+  final String password;
 
   @override
   State<FillUserTypeScreen> createState() => _FillUserTypeScreenState();
@@ -166,7 +170,7 @@ class _FillUserTypeScreenState extends State<FillUserTypeScreen> {
 
   void _onNextPressed(BuildContext context) {
     if (selectedUserType == 'owner') {
-      Navigator.of(context).pushNamed('/auth/signup/fill-personal');
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => FillPersonalScreen(userModel: widget.userModel, password: widget.password,)));
     } else {
       // Navigator.of(context).pushNamed('/auth/signup/fill-provider');
     }

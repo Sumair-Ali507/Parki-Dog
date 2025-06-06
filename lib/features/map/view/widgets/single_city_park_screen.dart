@@ -26,7 +26,7 @@ class SingleCityPark extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  result.name ?? '',
+                  result.name  ?? '',
                   style: const TextStyle(
                     fontSize: 16,
                     color: AppColors.primary,

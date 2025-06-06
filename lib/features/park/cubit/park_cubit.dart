@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:parki_dog/core/services/notifiactions/notification_service.dart';
 import 'package:parki_dog/features/auth/data/dog_model.dart';
@@ -7,6 +8,7 @@ import 'package:parki_dog/features/auth/data/friend_model.dart';
 import 'package:parki_dog/features/auth/data/unsocial_with_model.dart';
 import 'package:parki_dog/features/home/data/park_model.dart';
 import 'package:parki_dog/features/park/data/park_repository.dart';
+import 'package:parki_dog/main.dart';
 
 import '../../home/data/city_parks_model.dart';
 import '../data/single_park_model.dart';
@@ -51,8 +53,14 @@ class ParkCubit extends Cubit<ParkState> {
     );
   }
 
-  Future<void> checkInDog(String parkId, String parkName, String dogId, String dogName, List<FriendModel> friends,
-      DateTime leaveTime, Future<void> Function()? checkIn) async {
+  Future<void> checkInDog(
+      String parkId,
+      String parkName,
+      String dogId,
+      String dogName,
+      List<FriendModel> friends,
+      DateTime leaveTime,
+      Future<void> Function()? checkIn) async {
     if (leaveTime.isBefore(DateTime.now())) {
       emit(const ParkError('Invalid leave time'));
       return;
@@ -60,7 +68,8 @@ class ParkCubit extends Cubit<ParkState> {
     if (checkIn != null) {
       await checkIn();
     }
-    final result = await ParkRepository.checkInDog(parkId, parkName, dogId, leaveTime);
+    final result =
+        await ParkRepository.checkInDog(parkId, parkName, dogId, leaveTime);
 
     result.fold(
       (error) => emit(ParkError(error)),
@@ -91,6 +100,57 @@ class ParkCubit extends Cubit<ParkState> {
     );
   }
 
+  void showSuccessDialog() {
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        Future.delayed(const Duration(seconds: 2), () {
+          if (navigatorKey.currentState?.canPop() ?? false) {
+            navigatorKey.currentState?.pop();
+          }
+        });
+
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          contentPadding: const EdgeInsets.all(20),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.green.withOpacity(0.1),
+                ),
+                child: const Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                  size: 32,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Checked-in Successfully!',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> checkOutDog(String dogId, String parkId) async {
     final result = await ParkRepository.checkOutDog(dogId, parkId);
 
@@ -101,9 +161,11 @@ class ParkCubit extends Cubit<ParkState> {
   }
 
   bool isSafe(DogModel dog) {
-    final UnsocialWithModel userUnsocialWith = GetIt.I.get<DogModel>().unsocialWith!;
+    final UnsocialWithModel userUnsocialWith =
+        GetIt.I.get<DogModel>().unsocialWith!;
 
-    if (userUnsocialWith.breeds.contains(dog.breed) || userUnsocialWith.gender.contains(dog.gender)) {
+    if (userUnsocialWith.breeds.contains(dog.breed) ||
+        userUnsocialWith.gender.contains(dog.gender)) {
       return false;
     }
 
@@ -125,8 +187,10 @@ class ParkCubit extends Cubit<ParkState> {
     return true;
   }
 
-  Future<void> subscribeToNotifications(String parkId, UnsocialWithModel unsocialWith) async {
-    final result = await ParkRepository.subscribeToNotifications(parkId, unsocialWith);
+  Future<void> subscribeToNotifications(
+      String parkId, UnsocialWithModel unsocialWith) async {
+    final result =
+        await ParkRepository.subscribeToNotifications(parkId, unsocialWith);
 
     // result.fold(
     //   (error) => emit(ParkError(error)),
@@ -137,7 +201,8 @@ class ParkCubit extends Cubit<ParkState> {
   SingleParkModel? parksModel;
   List<String> parkImageList = [];
 
-  getSingleParkData({required SingleParkModel parkData, required List<String> imagesList}) {
+  getSingleParkData(
+      {required SingleParkModel parkData, required List<String> imagesList}) {
     parksModel = parkData;
     parkImageList = imagesList;
     if (parksModel != null && parkImageList.isNotEmpty) {

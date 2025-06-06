@@ -45,18 +45,19 @@ class Skeleton extends StatelessWidget {
                 child: BlocConsumer<NavigationCubit, NavigationState>(
                     bloc: context.read<NavigationCubit>()..changeIndex(0),
                     listenWhen: (previous, current) =>
-                    current is NavigationIndex && current.index == 2,
+                        current is NavigationIndex && current.index == 2,
                     listener: (context, state) {},
-                    buildWhen: (previous, current) => current is NavigationIndex,
+                    buildWhen: (previous, current) =>
+                        current is NavigationIndex,
                     builder: (context, state) {
                       return IndexedStack(
                         index: (state as NavigationIndex).index,
-                        children: const [
+                        children: [
                           HomeScreen(
                             parks: [],
                           ),
                           MapScreen(),
-                         AccountScreen()
+                          AccountScreen()
                         ],
                       );
                     }),

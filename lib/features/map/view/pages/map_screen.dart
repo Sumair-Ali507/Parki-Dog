@@ -39,7 +39,9 @@ class _MapScreenState extends State<MapScreen> {
                 alignment: Alignment.topCenter,
                 children: [
                   BlocBuilder<MapCubit, MapState>(
-                    buildWhen: (previous, current) => current is MarkersLoaded || current is CityMarkersLoaded,
+                    buildWhen: (previous, current) =>
+                        current is MarkersLoaded ||
+                        current is CityMarkersLoaded,
                     builder: (context, state) {
                       return GoogleMap(
                         mapToolbarEnabled: false,
@@ -51,18 +53,25 @@ class _MapScreenState extends State<MapScreen> {
                           mapCubit.center = location;
                           mapCubit.userLocation = location;
                           await mapCubit.cameraMoveEnded(
-                              await _controller.getVisibleRegion(), await _controller.getZoomLevel(), _controller);
+                              await _controller.getVisibleRegion(),
+                              await _controller.getZoomLevel(),
+                              _controller);
                         },
                         onTap: (v) {
                           _focusNode.unfocus();
                         },
                         onCameraMove: (position) {
                           _focusNode.unfocus();
-                          context.read<MapCubit>().center = Utils.gmapsLatLngToLatLng2(position.target);
+                          context.read<MapCubit>().center =
+                              Utils.gmapsLatLngToLatLng2(position.target);
                           //context.read<MapCubit>().zoomInZoomOut();
                         },
-                        onCameraIdle: () async => await context.read<MapCubit>().cameraMoveEnded(
-                            await _controller.getVisibleRegion(), await _controller.getZoomLevel(), _controller),
+                        onCameraIdle: () async => await context
+                            .read<MapCubit>()
+                            .cameraMoveEnded(
+                                await _controller.getVisibleRegion(),
+                                await _controller.getZoomLevel(),
+                                _controller),
                         buildingsEnabled: false,
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
@@ -89,7 +98,8 @@ class _MapScreenState extends State<MapScreen> {
                           shape: RoundedRectangleBorder(
                               side: const BorderSide(color: Color(0xffc6c6c6)),
                               borderRadius: BorderRadius.circular(60)),
-                          child: const Icon(CupertinoIcons.location_fill, size: 20),
+                          child: const Icon(CupertinoIcons.location_fill,
+                              size: 20),
                         ),
                       ),
                     ),
@@ -100,7 +110,8 @@ class _MapScreenState extends State<MapScreen> {
                           top: 64,
                           child: SafeArea(
                             child: BlocBuilder<MapCubit, MapState>(
-                              buildWhen: (previous, current) => current is ShowSearchButton,
+                              buildWhen: (previous, current) =>
+                                  current is ShowSearchButton,
                               builder: (context, state) {
                                 if (state is ShowSearchButton && state.show) {
                                   return const SearchThisAreaButton();
@@ -124,14 +135,11 @@ class _MapScreenState extends State<MapScreen> {
                           top: 16,
                           child: SafeArea(
                             child: MapSearch(
-                                focusNode: _focusNode, userLocation: location, countryCode: locationCubit.countryCode),
+                                focusNode: _focusNode,
+                                userLocation: location,
+                                countryCode: locationCubit.countryCode),
                           ),
                         ),
-                  const Positioned(
-                    bottom: 70,
-                    child: Align(
-                        alignment: Alignment.center, child: SizedBox(width: 350, height: 70, child: GoogleAdBanners())),
-                  ),
                 ],
               ),
               Positioned(
@@ -146,7 +154,8 @@ class _MapScreenState extends State<MapScreen> {
                         },
                         backgroundColor: Colors.white.withOpacity(0.8),
                         shape: RoundedRectangleBorder(
-                            side: const BorderSide(color: Color(0xffc6c6c6)), borderRadius: BorderRadius.circular(60)),
+                            side: const BorderSide(color: Color(0xffc6c6c6)),
+                            borderRadius: BorderRadius.circular(60)),
                         child: context.read<MapCubit>().searchByCityOn
                             ? const Icon(CupertinoIcons.reply_all, size: 20)
                             : const Icon(CupertinoIcons.globe, size: 20)),
@@ -154,7 +163,9 @@ class _MapScreenState extends State<MapScreen> {
                 ),
               ),
               context.read<MapCubit>().loading
-                  ? const Align(alignment: Alignment.center, child: SizedBox(child: CircularProgressIndicator()))
+                  ? const Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(child: CircularProgressIndicator()))
                   : const SizedBox(),
             ],
           ),
@@ -164,7 +175,8 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _currentLocation() async {
-    final lat_lng2.LatLng currentLocation = context.read<LocationCubit>().location;
+    final lat_lng2.LatLng currentLocation =
+        context.read<LocationCubit>().location;
 
     _controller.animateCamera(
       CameraUpdate.newCameraPosition(

@@ -16,6 +16,7 @@ import 'package:parki_dog/features/home/data/park_model.dart';
 import 'package:parki_dog/features/map/view/widgets/map_marker.dart';
 import 'package:parki_dog/features/map/view/widgets/single_city_park_screen.dart';
 import 'package:parki_dog/features/park/view/pages/park_screen.dart';
+import 'package:parki_dog/main.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 import 'package:flutter/material.dart';
 
@@ -43,8 +44,8 @@ class MapCubit extends Cubit<MapState> {
 
   List<ParkModel> _parks = [];
 
-  Future<void> cameraMoveEnded(
-      gmaps.LatLngBounds bounds, double zoom, gmaps.GoogleMapController googleMapController) async {
+  Future<void> cameraMoveEnded(gmaps.LatLngBounds bounds, double zoom,
+      gmaps.GoogleMapController googleMapController) async {
     _searchRadius = Utils.getRadiusFromBounds(bounds);
     if (zoom > 13.5 && _zoom < 13.5 || zoom < 13.5 && _zoom > 13.5) {
       _zoom = zoom;
@@ -60,7 +61,8 @@ class MapCubit extends Cubit<MapState> {
   Future<void> getMapNearbyParks() async {
     if (!hasViewChanged()) return;
 
-    final localParks = await getNearbyParksFromDB(center, _searchRadius < 500 ? 500 : _searchRadius);
+    final localParks = await getNearbyParksFromDB(
+        center, _searchRadius < 500 ? 500 : _searchRadius);
 
     final thresh = 19 - _zoom.round() > 0 ? 19 - _zoom.round() : 0;
 
@@ -71,8 +73,8 @@ class MapCubit extends Cubit<MapState> {
       return;
     }
 
-    final response =
-        await GMapsService.nearbySearch('dog park', 'park', center, radius: _searchRadius < 500 ? 500 : _searchRadius);
+    final response = await GMapsService.nearbySearch('dog park', 'park', center,
+        radius: _searchRadius < 500 ? 500 : _searchRadius);
     return response.fold(
       (l) => emit(MapError(l)),
       (r) async {
@@ -81,7 +83,8 @@ class MapCubit extends Cubit<MapState> {
             (park) async {
               HomeLocalRepository.savePark(ParkModel.fromGMaps(park));
               var parkModel = ParkModel.fromGMaps(park);
-              parkModel.numberOfDogs = await getNumberOfCheckedInDogs(parkModel.id!);
+              parkModel.numberOfDogs =
+                  await getNumberOfCheckedInDogs(parkModel.id!);
 
               return parkModel;
             },
@@ -119,7 +122,8 @@ class MapCubit extends Cubit<MapState> {
   List<dynamic> holdMarkerCheckIn = [];
   Set<gmaps.Marker> normalMarker = {};
   Future<void> getMarkers(List<ParkModel> parks) async {
-    List<gmaps.Marker> markers = await Future.wait(parks.map<Future<gmaps.Marker>>(
+    List<gmaps.Marker> markers =
+        await Future.wait(parks.map<Future<gmaps.Marker>>(
       (park) async {
         final marker = gmaps.Marker(
           onTap: () async {
@@ -133,21 +137,25 @@ class MapCubit extends Cubit<MapState> {
                 .whenComplete(() async => await getAllParkImage())
                 .whenComplete(() => _navigationCubit.showBottomSheet(
                       ParkScreen(() async {
-                        park.photoUrl ??= await GMapsService.getPlacePhoto(park.photoReference);
+                        park.photoUrl ??= await GMapsService.getPlacePhoto(
+                            park.photoReference);
                         return park;
                       },
                           result: singleParkModel!.result!,
                           parkImageList: parkImageList,
                           checkIn: () async => await checkInPark(
-                              position: gmaps.LatLng(park.location!.latitude, park.location!.longitude)),
+                              position: gmaps.LatLng(park.location!.latitude,
+                                  park.location!.longitude)),
                           checkOut: () async => await checkOutPark(
-                              position: gmaps.LatLng(park.location!.latitude, park.location!.longitude))),
+                              position: gmaps.LatLng(park.location!.latitude,
+                                  park.location!.longitude))),
                     ));
             loading = false;
             emit(EndBuildingPark());
           },
           markerId: gmaps.MarkerId(park.id!),
-          position: gmaps.LatLng(park.location!.latitude, park.location!.longitude),
+          position:
+              gmaps.LatLng(park.location!.latitude, park.location!.longitude),
           icon: checkPark == park.id!
               ? await CheckedMapMarker(
                   name: park.name!,
@@ -168,7 +176,8 @@ class MapCubit extends Cubit<MapState> {
       bool markerThere = false;
       for (var i in markers) {
         if (i.markerId.value == checkMarker?.markerId.value) {
-          int numberOfDogs = await getNumberOfCheckedInDogs(checkMarker!.markerId.value);
+          int numberOfDogs =
+              await getNumberOfCheckedInDogs(checkMarker!.markerId.value);
           markers.remove(i);
           markers.add(gmaps.Marker(
               onTap: checkMarker!.onTap,
@@ -183,7 +192,8 @@ class MapCubit extends Cubit<MapState> {
         }
       }
       if (markerThere == false) {
-        int numberOfDogs = await getNumberOfCheckedInDogs(checkMarker!.markerId.value);
+        int numberOfDogs =
+            await getNumberOfCheckedInDogs(checkMarker!.markerId.value);
         markers.add(gmaps.Marker(
             onTap: checkMarker!.onTap,
             markerId: checkMarker!.markerId,
@@ -202,10 +212,12 @@ class MapCubit extends Cubit<MapState> {
   String checkPark = 'zz';
   gmaps.Marker? checkMarker;
   String? checkMarkerName;
-  Future<void> checkInHomePark({required String iD, required SingleParkModel singleParkModel}) async {
+  Future<void> checkInHomePark(
+      {required String iD, required SingleParkModel singleParkModel}) async {
     int numberOfDogs = await getNumberOfCheckedInDogs(iD);
     if (normalMarker.isNotEmpty) {
-      gmaps.Marker newMarker = normalMarker.singleWhere((e) => e.markerId.value == iD);
+      gmaps.Marker newMarker =
+          normalMarker.singleWhere((e) => e.markerId.value == iD);
       checkPark = newMarker.markerId.value;
       normalMarker.removeWhere((e) => e.markerId.value == iD);
       normalMarker.add(gmaps.Marker(
@@ -245,31 +257,41 @@ class MapCubit extends Cubit<MapState> {
                       return ParkModel(
                         name: singleParkModel.result!.name,
                         id: singleParkModel.result!.placeId,
-                        location: GeoPoint(singleParkModel.result!.geometry!.location!.lat!,
+                        location: GeoPoint(
+                            singleParkModel.result!.geometry!.location!.lat!,
                             singleParkModel.result!.geometry!.location!.lng!),
                         numberOfDogs: numberOfDogs,
                         photoUrl: '',
                         photoReference: '',
-                        userRatingsTotal: singleParkModel.result!.userRatingsTotal,
+                        userRatingsTotal:
+                            singleParkModel.result!.userRatingsTotal,
                         rating: singleParkModel.result!.rating?.toDouble(),
                       );
                     },
                         result: singleParkModel.result!,
                         parkImageList: parkImageList,
                         checkIn: () async => await checkInPark(
-                            position: gmaps.LatLng(singleParkModel.result!.geometry!.location!.lat!,
-                                singleParkModel.result!.geometry!.location!.lng!)),
+                            position: gmaps.LatLng(
+                                singleParkModel
+                                    .result!.geometry!.location!.lat!,
+                                singleParkModel
+                                    .result!.geometry!.location!.lng!)),
                         checkOut: () async => await checkOutPark(
-                            position: gmaps.LatLng(singleParkModel.result!.geometry!.location!.lat!,
-                                singleParkModel.result!.geometry!.location!.lng!))),
+                            position: gmaps.LatLng(
+                                singleParkModel
+                                    .result!.geometry!.location!.lat!,
+                                singleParkModel
+                                    .result!.geometry!.location!.lng!))),
                   ));
 
           loading = false;
           emit(EndBuildingPark());
         },
-        markerId: gmaps.MarkerId(singleParkModel.result?.placeId ?? 'homeMarker'),
+        markerId:
+            gmaps.MarkerId(singleParkModel.result?.placeId ?? 'homeMarker'),
         position: gmaps.LatLng(
-            singleParkModel.result?.geometry?.location?.lat ?? 0, singleParkModel.result?.geometry?.location?.lng ?? 0),
+            singleParkModel.result?.geometry?.location?.lat ?? 0,
+            singleParkModel.result?.geometry?.location?.lng ?? 0),
         icon: await CheckedMapMarker(
           name: singleParkModel.result!.name!,
           zoom: _zoom,
@@ -290,31 +312,41 @@ class MapCubit extends Cubit<MapState> {
                       return ParkModel(
                         name: singleParkModel.result!.name,
                         id: singleParkModel.result!.placeId,
-                        location: GeoPoint(singleParkModel.result!.geometry!.location!.lat!,
+                        location: GeoPoint(
+                            singleParkModel.result!.geometry!.location!.lat!,
                             singleParkModel.result!.geometry!.location!.lng!),
                         numberOfDogs: numberOfDogs,
                         photoUrl: '',
                         photoReference: '',
-                        userRatingsTotal: singleParkModel.result!.userRatingsTotal,
+                        userRatingsTotal:
+                            singleParkModel.result!.userRatingsTotal,
                         rating: singleParkModel.result!.rating?.toDouble(),
                       );
                     },
                         result: singleParkModel.result!,
                         parkImageList: parkImageList,
                         checkIn: () async => await checkInPark(
-                            position: gmaps.LatLng(singleParkModel.result!.geometry!.location!.lat!,
-                                singleParkModel.result!.geometry!.location!.lng!)),
+                            position: gmaps.LatLng(
+                                singleParkModel
+                                    .result!.geometry!.location!.lat!,
+                                singleParkModel
+                                    .result!.geometry!.location!.lng!)),
                         checkOut: () async => await checkOutPark(
-                            position: gmaps.LatLng(singleParkModel.result!.geometry!.location!.lat!,
-                                singleParkModel.result!.geometry!.location!.lng!))),
+                            position: gmaps.LatLng(
+                                singleParkModel
+                                    .result!.geometry!.location!.lat!,
+                                singleParkModel
+                                    .result!.geometry!.location!.lng!))),
                   ));
 
           loading = false;
           emit(EndBuildingPark());
         },
-        markerId: gmaps.MarkerId(singleParkModel.result?.placeId ?? 'homeMarker'),
+        markerId:
+            gmaps.MarkerId(singleParkModel.result?.placeId ?? 'homeMarker'),
         position: gmaps.LatLng(
-            singleParkModel.result?.geometry?.location?.lat ?? 0, singleParkModel.result?.geometry?.location?.lng ?? 0),
+            singleParkModel.result?.geometry?.location?.lat ?? 0,
+            singleParkModel.result?.geometry?.location?.lng ?? 0),
         icon: await CheckedMapMarker(
           name: singleParkModel.result!.name!,
           zoom: _zoom,
@@ -327,7 +359,8 @@ class MapCubit extends Cubit<MapState> {
   }
 
   Future<void> checkInPark({required gmaps.LatLng position}) async {
-    gmaps.Marker newMarker = normalMarker.singleWhere((e) => e.position == position);
+    gmaps.Marker newMarker =
+        normalMarker.singleWhere((e) => e.position == position);
     checkPark = newMarker.markerId.value;
     int numberOfDogs = await getNumberOfCheckedInDogs(newMarker.markerId.value);
     normalMarker.removeWhere((e) => e.position == position);
@@ -343,11 +376,64 @@ class MapCubit extends Cubit<MapState> {
 
     emit(CheckedInPark());
     emit(EndOfMethodState());
+    showSuccessDialog();
+  }
+
+  void showSuccessDialog() {
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        Future.delayed(const Duration(seconds: 2), () {
+          if (navigatorKey.currentState?.canPop() ?? false) {
+            navigatorKey.currentState?.pop();
+          }
+        });
+
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          contentPadding: const EdgeInsets.all(20),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.green.withOpacity(0.1),
+                ),
+                child: const Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                  size: 32,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Checked-in Successfully!',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> checkOutPark({required gmaps.LatLng position}) async {
     checkPark = 'zz';
-    gmaps.Marker newMarker = normalMarker.singleWhere((e) => e.position == position);
+    gmaps.Marker newMarker =
+        normalMarker.singleWhere((e) => e.position == position);
     int numberOfDogs = await getNumberOfCheckedInDogs(newMarker.markerId.value);
     normalMarker.removeWhere((e) => e.position == position);
     normalMarker.add(gmaps.Marker(
@@ -367,8 +453,10 @@ class MapCubit extends Cubit<MapState> {
 
   Future<void> checkOutGlob({required gmaps.LatLng position}) async {
     try {
-      gmaps.Marker newMarker = cityMarkers.singleWhere((e) => e.position == position);
-      int numberOfDogs = await getNumberOfCheckedInDogs(newMarker.markerId.value);
+      gmaps.Marker newMarker =
+          cityMarkers.singleWhere((e) => e.position == position);
+      int numberOfDogs =
+          await getNumberOfCheckedInDogs(newMarker.markerId.value);
       cityMarkers.removeWhere((e) => e.position == position);
       cityMarkers.add(gmaps.Marker(
           onTap: newMarker.onTap,
@@ -386,8 +474,10 @@ class MapCubit extends Cubit<MapState> {
       print(e);
     }
     try {
-      gmaps.Marker newMarker = cityMarkers.singleWhere((e) => e.markerId.value == checkPark);
-      int numberOfDogs = await getNumberOfCheckedInDogs(newMarker.markerId.value);
+      gmaps.Marker newMarker =
+          cityMarkers.singleWhere((e) => e.markerId.value == checkPark);
+      int numberOfDogs =
+          await getNumberOfCheckedInDogs(newMarker.markerId.value);
       cityMarkers.removeWhere((e) => e.markerId.value == checkPark);
       cityMarkers.add(gmaps.Marker(
           onTap: newMarker.onTap,
@@ -409,7 +499,8 @@ class MapCubit extends Cubit<MapState> {
   }
 
   Future<void> checkInGlob({required gmaps.LatLng position}) async {
-    gmaps.Marker newMarker = cityMarkers.singleWhere((e) => e.position == position);
+    gmaps.Marker newMarker =
+        cityMarkers.singleWhere((e) => e.position == position);
     checkPark = newMarker.markerId.value;
     int numberOfDogs = await getNumberOfCheckedInDogs(newMarker.markerId.value);
     cityMarkers.removeWhere((e) => e.position == position);
@@ -430,8 +521,10 @@ class MapCubit extends Cubit<MapState> {
   Future<void> checkOutAll({required String iD}) async {
     try {
       int numberOfDogs = await getNumberOfCheckedInDogs(iD);
-      gmaps.Marker newMarker = normalMarker.singleWhere((e) => e.markerId.value == gmaps.MarkerId(iD).value);
-      normalMarker.removeWhere((e) => e.markerId.value == gmaps.MarkerId(iD).value);
+      gmaps.Marker newMarker = normalMarker
+          .singleWhere((e) => e.markerId.value == gmaps.MarkerId(iD).value);
+      normalMarker
+          .removeWhere((e) => e.markerId.value == gmaps.MarkerId(iD).value);
       normalMarker.add(gmaps.Marker(
           onTap: newMarker.onTap,
           markerId: newMarker.markerId,
@@ -448,8 +541,10 @@ class MapCubit extends Cubit<MapState> {
     } catch (e) {}
     try {
       int numberOfDogs = await getNumberOfCheckedInDogs(iD);
-      gmaps.Marker newMarker = cityMarkers.singleWhere((e) => e.markerId.value == gmaps.MarkerId(iD).value);
-      cityMarkers.removeWhere((e) => e.markerId.value == gmaps.MarkerId(iD).value);
+      gmaps.Marker newMarker = cityMarkers
+          .singleWhere((e) => e.markerId.value == gmaps.MarkerId(iD).value);
+      cityMarkers
+          .removeWhere((e) => e.markerId.value == gmaps.MarkerId(iD).value);
       cityMarkers.add(gmaps.Marker(
           onTap: newMarker.onTap,
           markerId: newMarker.markerId,
@@ -468,7 +563,8 @@ class MapCubit extends Cubit<MapState> {
     emit(EndOfMethodState());
   }
 
-  Future<List<ParkModel>> getNearbyParksFromDB(LatLng location, int radius) async {
+  Future<List<ParkModel>> getNearbyParksFromDB(
+      LatLng location, int radius) async {
     var parks = HomeLocalRepository.getNearbyParks(location, radius);
 
     await Future.wait(parks.map((e) async {
@@ -493,7 +589,8 @@ class MapCubit extends Cubit<MapState> {
       const Duration(milliseconds: 500),
       () async {
         try {
-          final response = await GMapsService.autocomplete(text, location, countryCode, Utils.sessionToken);
+          final response = await GMapsService.autocomplete(
+              text, location, countryCode, Utils.sessionToken);
 
           return response.fold(
             (l) => emit(MapError(l)),
@@ -523,13 +620,16 @@ class MapCubit extends Cubit<MapState> {
         .whenComplete(() => _navigationCubit.showBottomSheet(
               ParkScreen(
                 () async {
-                  final response = await GMapsService.getPlaceDetails(id, Utils.sessionToken);
+                  final response = await GMapsService.getPlaceDetails(
+                      id, Utils.sessionToken);
                   return response.fold(
                     (l) => emit(MapError(l)),
                     (result) async {
                       Utils.regenerateSessionToken();
-                      final park = ParkModel.fromGMaps(result as Map<String, dynamic>);
-                      park.photoUrl = await GMapsService.getPlacePhoto(park.photoReference);
+                      final park =
+                          ParkModel.fromGMaps(result as Map<String, dynamic>);
+                      park.photoUrl =
+                          await GMapsService.getPlacePhoto(park.photoReference);
                       return park;
                     },
                   );
@@ -579,7 +679,8 @@ class MapCubit extends Cubit<MapState> {
           return response.fold(
             (l) => emit(MapError(l)),
             (r) async {
-              PredictionsModel predictionsModel = PredictionsModel.fromJson(r as Map<String, dynamic>);
+              PredictionsModel predictionsModel =
+                  PredictionsModel.fromJson(r as Map<String, dynamic>);
               emit(CityAutocompleteResults(predictionsModel.predictions!));
             },
           );
@@ -592,7 +693,9 @@ class MapCubit extends Cubit<MapState> {
 
   ParksModel? parksModel;
   getAllParksInCity(
-      {required BuildContext context, required String city, required gmaps.GoogleMapController googleMapController}) {
+      {required BuildContext context,
+      required String city,
+      required gmaps.GoogleMapController googleMapController}) {
     if (!validateSearchText(city)) {
       return;
     }
@@ -647,8 +750,13 @@ class MapCubit extends Cubit<MapState> {
               i.name!,
               numberOfDogs,
             ];
-            await parkDetails(parkId: i.placeId!).whenComplete(() async => await getAllParkImage()).whenComplete(() {
-              if (calculateDistance(userLocation.latitude, userLocation.longitude, i.geometry!.location!.lat!,
+            await parkDetails(parkId: i.placeId!)
+                .whenComplete(() async => await getAllParkImage())
+                .whenComplete(() {
+              if (calculateDistance(
+                      userLocation.latitude,
+                      userLocation.longitude,
+                      i.geometry!.location!.lat!,
                       i.geometry!.location!.lng!) >
                   1500) {
                 _navigationCubit.showBottomSheet(
@@ -663,7 +771,8 @@ class MapCubit extends Cubit<MapState> {
                     return ParkModel(
                       name: i.name,
                       id: i.placeId,
-                      location: GeoPoint(i.geometry!.location!.lat!, i.geometry!.location!.lng!),
+                      location: GeoPoint(i.geometry!.location!.lat!,
+                          i.geometry!.location!.lng!),
                       numberOfDogs: numberOfDogs,
                       photoUrl: '',
                       photoReference: '',
@@ -674,9 +783,11 @@ class MapCubit extends Cubit<MapState> {
                       result: singleParkModel!.result!,
                       parkImageList: parkImageList,
                       checkIn: () async => await checkInGlob(
-                          position: gmaps.LatLng(i.geometry!.location!.lat!, i.geometry!.location!.lng!)),
+                          position: gmaps.LatLng(i.geometry!.location!.lat!,
+                              i.geometry!.location!.lng!)),
                       checkOut: () async => await checkOutGlob(
-                          position: gmaps.LatLng(i.geometry!.location!.lat!, i.geometry!.location!.lng!))),
+                          position: gmaps.LatLng(i.geometry!.location!.lat!,
+                              i.geometry!.location!.lng!))),
                 );
               }
             });
@@ -684,7 +795,8 @@ class MapCubit extends Cubit<MapState> {
             loading = false;
             emit(EndBuildingPark());
           },
-          position: gmaps.LatLng(i.geometry!.location!.lat!, i.geometry!.location!.lng!),
+          position: gmaps.LatLng(
+              i.geometry!.location!.lat!, i.geometry!.location!.lng!),
         ),
       );
     }
@@ -723,7 +835,10 @@ class MapCubit extends Cubit<MapState> {
             await parkDetails(parkId: i.placeId!)
                 .whenComplete(() async => await getAllParkImage())
                 .whenComplete(() async {
-              if (calculateDistance(userLocation.latitude, userLocation.longitude, i.geometry!.location!.lat!,
+              if (calculateDistance(
+                      userLocation.latitude,
+                      userLocation.longitude,
+                      i.geometry!.location!.lat!,
                       i.geometry!.location!.lng!) >
                   1500) {
                 _navigationCubit.showBottomSheet(
@@ -739,7 +854,8 @@ class MapCubit extends Cubit<MapState> {
                     return ParkModel(
                       name: i.name,
                       id: i.placeId,
-                      location: GeoPoint(i.geometry!.location!.lat!, i.geometry!.location!.lng!),
+                      location: GeoPoint(i.geometry!.location!.lat!,
+                          i.geometry!.location!.lng!),
                       numberOfDogs: numberOfDogs,
                       photoUrl: '',
                       photoReference: '',
@@ -750,9 +866,11 @@ class MapCubit extends Cubit<MapState> {
                       result: singleParkModel!.result!,
                       parkImageList: parkImageList,
                       checkIn: () async => await checkInGlob(
-                          position: gmaps.LatLng(i.geometry!.location!.lat!, i.geometry!.location!.lng!)),
+                          position: gmaps.LatLng(i.geometry!.location!.lat!,
+                              i.geometry!.location!.lng!)),
                       checkOut: () async => await checkOutGlob(
-                          position: gmaps.LatLng(i.geometry!.location!.lat!, i.geometry!.location!.lng!))),
+                          position: gmaps.LatLng(i.geometry!.location!.lat!,
+                              i.geometry!.location!.lng!))),
                 );
               }
             });
@@ -760,7 +878,8 @@ class MapCubit extends Cubit<MapState> {
             loading = false;
             emit(EndBuildingPark());
           },
-          position: gmaps.LatLng(i.geometry!.location!.lat!, i.geometry!.location!.lng!),
+          position: gmaps.LatLng(
+              i.geometry!.location!.lat!, i.geometry!.location!.lng!),
         ),
       );
       emit(GotMarkerMapState());
@@ -769,7 +888,8 @@ class MapCubit extends Cubit<MapState> {
           gmaps.CameraUpdate.newCameraPosition(
             gmaps.CameraPosition(
               bearing: 0,
-              target: gmaps.LatLng(i.geometry!.location!.lat!, i.geometry!.location!.lng!),
+              target: gmaps.LatLng(
+                  i.geometry!.location!.lat!, i.geometry!.location!.lng!),
               zoom: _zoom,
             ),
           ),
@@ -792,7 +912,8 @@ class MapCubit extends Cubit<MapState> {
           return response.fold(
             (l) => emit(MapError(l)),
             (r) async {
-              singleParkModel = SingleParkModel.fromJson(r as Map<String, dynamic>);
+              singleParkModel =
+                  SingleParkModel.fromJson(r as Map<String, dynamic>);
               completer.complete();
             },
           );
@@ -823,8 +944,11 @@ class MapCubit extends Cubit<MapState> {
     const R = 6371000.0; // Earth radius in meters
     double dLat = _toRadians(lat2 - lat1);
     double dLon = _toRadians(lon2 - lon1);
-    double a =
-        sin(dLat / 2) * sin(dLat / 2) + cos(_toRadians(lat1)) * cos(_toRadians(lat2)) * sin(dLon / 2) * sin(dLon / 2);
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_toRadians(lat1)) *
+            cos(_toRadians(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
     return R * c;
   }

@@ -11,6 +11,8 @@ import 'package:parki_dog/core/widgets/input_field.dart';
 import 'package:parki_dog/core/widgets/push_button.dart';
 import 'package:parki_dog/core/widgets/step_progress_bar.dart';
 import 'package:parki_dog/features/auth/cubit/auth_cubit.dart';
+import 'package:parki_dog/features/auth/data/user_model.dart';
+import 'package:parki_dog/features/auth/view/pages/fill_dog_screen.dart';
 import 'package:parki_dog/features/auth/view/widgets/user_add_photo.dart';
 
 import '../../../../core/resources_manager/strings_manager.dart';
@@ -18,7 +20,11 @@ import '../../../lang/lang_cubit.dart';
 import '../../../lang/lang_state.dart';
 
 class FillPersonalScreen extends StatefulWidget {
-  const FillPersonalScreen({super.key});
+  const FillPersonalScreen(
+      {super.key, required this.userModel, required this.password});
+
+  final UserModel userModel;
+  final String password;
 
   @override
   State<FillPersonalScreen> createState() => _FillPersonalScreenState();
@@ -113,8 +119,11 @@ class _FillPersonalScreenState extends State<FillPersonalScreen> {
           child: BlocListener<AuthCubit, AuthState>(
             listener: (context, state) {
               if (state is UserUpdated) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/auth/signup/fill-dog', (Route<dynamic> route) => false);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            FillDogScreen(password: widget.password)),
+                    (Route<dynamic> route) => false);
               }
             },
             child: PushButton(
@@ -215,6 +224,7 @@ class _FillPersonalScreenState extends State<FillPersonalScreen> {
                 address: address,
                 dob: dob,
                 gender: gender,
+                email: widget.userModel.email,
               );
 
       Navigator.of(context).pushNamed('/auth/signup/fill-dog');

@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:maps_launcher/maps_launcher.dart';
@@ -26,7 +28,12 @@ import '../../../shop/view/pages/web_view.dart';
 import '../../data/single_park_model.dart';
 
 class ParkScreen extends StatelessWidget {
-  const ParkScreen(this.init, {super.key, this.checkIn, this.checkOut, this.result, this.parkImageList});
+  const ParkScreen(this.init,
+      {super.key,
+      this.checkIn,
+      this.checkOut,
+      this.result,
+      this.parkImageList});
 
   final Function() init;
   final Future<void> Function()? checkIn;
@@ -66,151 +73,343 @@ class ParkScreen extends StatelessWidget {
           if (park != null) {
             return BlocBuilder<LangCubit, LangState>(builder: (context, state) {
               return Scaffold(
-                body: Center(
-                  child: Column(
-                    children: [
-                      Carousel(photoUrls: parkImageList ?? [park!.photoUrl]),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    park!.name!,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.w500,
+                body: SingleChildScrollView(
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Carousel(photoUrls: parkImageList ?? [park!.photoUrl]),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 0.5.sw,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            park!.name!,
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                color: AppColors.primary,
+                                                fontWeight: FontWeight.w500,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        ParkRating(
+                                            rating: park!.rating,
+                                            totalRatings:
+                                                park!.userRatingsTotal),
+                                      ],
                                     ),
+                                  ),
+                                  Spacer(),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        'Safe in 3 hours',
+                                        style: TextStyle(
+                                            color: Color(0xFFA00000),
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                      SizedBox(
+                                        height: 4.h,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                              'assts/icons/bell-solid.svg'),
+                                          SizedBox(
+                                            width: 4.w,
+                                          ),
+                                          Text(
+                                            'Notify me',
+                                            style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w600,
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                color: Colors.black),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  ParkDistance(
+                                    userLocation: locationCubit.location,
+                                    parkLocation: LatLng(
+                                        park!.location!.latitude,
+                                        park!.location!.longitude),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  SvgPicture.asset(
+                                      'assets/images/icons/bus.svg'),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '17m by by bus',
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.black87),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                ParkRating(rating: park!.rating, totalRatings: park!.userRatingsTotal),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            ParkDistance(
-                              userLocation: locationCubit.location,
-                              parkLocation: LatLng(park!.location!.latitude, park!.location!.longitude),
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                // Directions button
-                                ConstrainedBox(
-                                  constraints: BoxConstraints(minWidth: 125, maxWidth: 135),
-                                  child: PushButton(
-                                    text: 'Directions'.tr(),
-                                    textColor: AppColors.primary,
-                                    fontSize: 11,
-                                    icon: const Icon(
-                                      CupertinoIcons.location,
-                                      size: 16,
-                                      color: AppColors.primary,
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  // Directions button
+                                  SizedBox(
+                                    width: 215.w,
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.location_on_outlined),
+                                        SizedBox(
+                                          width: 4.w,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            'Attaka, Suez Governorate..',
+                                            style: TextStyle(
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    onPress: () {
-                                      MapsLauncher.launchCoordinates(
-                                          park!.location!.latitude, park!.location!.longitude);
-                                    },
-                                    height: 32,
-                                    fill: false,
-                                    borderColor: AppColors.primary,
-                                    color: Colors.transparent,
-                                    borderRadius: 8,
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-
-                                // Check in button
-                                CheckInCheckOut(park: park!, dogs: dogs!, checkIn: checkIn, checkOut: checkOut),
-                                const Spacer(),
-
-                                // Park safety status
-                                _getParkSafetyStatus(dogs!, park!.id!, context),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            CheckedInDogs(dogs ?? []),
-                          ],
+                                  Spacer(),
+                                  InkWell(
+                                    onTap: () {
+                                      MapsLauncher.launchCoordinates(
+                                          park!.location!.latitude,
+                                          park!.location!.longitude);
+                                    },
+                                    child: Container(
+                                        padding: EdgeInsets.all(8.sp),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(16.r),
+                                            border: Border.all(
+                                                color: AppColors.secondary)),
+                                        width: 70.w,
+                                        height: 40.h,
+                                        child: Row(
+                                          children: [
+                                            Icon(CupertinoIcons.location),
+                                            SizedBox(
+                                              width: 4.w,
+                                            ),
+                                            Text('Go'),
+                                          ],
+                                        )),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  // Directions button
+                                  SizedBox(
+                                    width: 215.w,
+                                    child: Row(
+                                      children: [
+                                        Icon(CupertinoIcons.clock),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          '24 hours - ',
+                                          style: TextStyle(),
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          'Open Now',
+                                          style: TextStyle(color: Colors.green),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 0.85.sw,
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icons/paw.svg',
+                                          colorFilter: ColorFilter.mode(
+                                              Colors.black, BlendMode.srcIn),
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          'Checked-in',
+                                          style: TextStyle(),
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          dogs != null
+                                              ? dogs!.length.toString()
+                                              : '0',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                          child: ListView(
-                        shrinkWrap: true,
-                        children: [
-                          const SizedBox(height: 16),
-                          result?.reviews?.isEmpty ?? true
-                              ? Center(child: Text('No Reviews'.tr()))
-                              : Column(
-                                  children: List.generate(
-                                    result?.reviews?.length ?? 0,
-                                    (index) => Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      margin: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(8.0),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                        Divider(
+                          color: Colors.black12,
+                        ),
+                        SizedBox(
+                          height: 300,
+                          child: ListView.builder(
+                              itemCount: 6,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  margin: EdgeInsets.all(16.h),
+                                  child: Column(
+                                    children: [
+                                      Row(
                                         children: [
-                                          Row(
-                                            children: [
-                                              CircleAvatar(
-                                                radius: 20.0,
-                                                backgroundImage:
-                                                    NetworkImage(result?.reviews?[index].profilePhotoUrl ?? ''),
-                                              ),
-                                              const SizedBox(width: 8.0),
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    result?.reviews?[index].authorName ?? '',
-                                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                          SizedBox(
+                                            width: 60.w,
+                                            height: 45.h,
+                                            child: Stack(
+                                              children: [
+                                                Container(
+                                                  clipBehavior: Clip.hardEdge,
+                                                  width: 40.w,
+                                                  height: 40.h,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
                                                   ),
+                                                  child: Image.network(
+                                                    'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?cs=srgb&dl=pexels-italo-melo-881954-2379004.jpg&fm=jpg',
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  top: 10,
+                                                  left: 25,
+                                                  child: Container(
+                                                    clipBehavior: Clip.hardEdge,
+                                                    width: 32.w,
+                                                    height: 32.h,
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                            color: Colors.white,
+                                                            width: 2)),
+                                                    child: ClipOval(
+                                                      child: Image.network(
+                                                        'https://hips.hearstapps.com/clv.h-cdn.co/assets/16/18/gettyimages-586890581.jpg?crop=0.668xw:1.00xh;0.219xw,0&resize=980:*',
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text('Afzal Khan'),
+                                                  SizedBox(
+                                                    width: 4.w,
+                                                  ),
+                                                  Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 4.h,
+                                                            horizontal: 8.w),
+                                                    width: 40.w,
+                                                    height: 25.h,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.r),
+                                                      color: Color(0xFFEDFCF2),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        'Safe',
+                                                        style: TextStyle(
+                                                            fontSize: 9.sp,
+                                                            color: Color(
+                                                                0xFF099250)),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 4.h,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  SvgPicture.asset(
+                                                      'assets/new-images/woman.svg'),
                                                   Text(
-                                                    result?.reviews?[index].relativeTimeDescription ?? '',
-                                                    style: const TextStyle(color: Colors.grey),
+                                                    'Labrador Retriver',
+                                                    style: TextStyle(
+                                                      fontSize: 12.sp,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Color(0xFF808086),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
                                             ],
                                           ),
-                                          const SizedBox(height: 8.0),
-                                          Row(
-                                            children: [
-                                              const Icon(
-                                                Icons.star,
-                                                color: Colors.amber,
-                                              ),
-                                              Text('${result?.reviews?[index].rating ?? 0}/5'),
-                                            ],
+                                          Spacer(),
+                                          Icon(
+                                            Icons.more_horiz,
+                                            color: Colors.black,
                                           ),
-                                          const SizedBox(height: 8.0),
-                                          Text(result?.reviews?[index].text ?? ''),
                                         ],
                                       ),
-                                    ),
+                                      Divider(
+                                        color: Colors.black12,
+                                      ),
+                                    ],
                                   ),
-                                ),
-                        ],
-                      )),
-                      buttonReview(() {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => WebView(
-                            url: result?.url ?? '',
-                            itemName: result?.name ?? '',
+                                );
+                              }),
+                        ),
+                        Container(
+                          margin: EdgeInsets.all(16.sp),
+                          width: 1.sw,
+                          child: Expanded(
+                            child: CheckInCheckOut(
+                                park: park!,
+                                dogs: dogs!,
+                                checkIn: checkIn,
+                                checkOut: checkOut),
                           ),
-                        ));
-                      }, 'Review us'.tr()),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -223,7 +422,8 @@ class ParkScreen extends StatelessWidget {
     );
   }
 
-  Widget _getParkSafetyStatus(List<DogModel> dogs, String parkId, BuildContext context) {
+  Widget _getParkSafetyStatus(
+      List<DogModel> dogs, String parkId, BuildContext context) {
     DateTime? timeForSafety;
 
     for (var dog in dogs) {
@@ -263,8 +463,8 @@ class ParkScreen extends StatelessWidget {
             const SizedBox(width: 4),
             LinkButton(
               text: 'Notify Me'.tr(),
-              onPress: () =>
-                  context.read<ParkCubit>().subscribeToNotifications(parkId, GetIt.I.get<DogModel>().unsocialWith!),
+              onPress: () => context.read<ParkCubit>().subscribeToNotifications(
+                  parkId, GetIt.I.get<DogModel>().unsocialWith!),
               color: AppColors.primary,
               fontWeight: FontWeight.bold,
             ),
@@ -285,7 +485,8 @@ class ParkScreen extends StatelessWidget {
   }
 }
 
-Widget buttonReview(final VoidCallback onPressed, final String text) => ElevatedButton(
+Widget buttonReview(final VoidCallback onPressed, final String text) =>
+    ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../core/utils/assets_manager.dart';
 
 class ParkRating extends StatelessWidget {
-  const ParkRating({super.key, required this.rating, required this.totalRatings});
+  const ParkRating(
+      {super.key, required this.rating, required this.totalRatings});
 
   final double? rating;
   final int? totalRatings;
@@ -27,10 +29,10 @@ class ParkRating extends StatelessWidget {
     return Row(
       children: List.generate(
         5,
-            (index) => Image.asset(
+        (index) => SvgPicture.asset(
           index < roundedRating
-              ? ImageAssets.boneFilled
-              : ImageAssets.boneOutlined,
+              ? 'assets/icons/bone-filled.svg'
+              : 'assets/icons/boneOutlined.svg',
           color: index < (rating ?? 0)
               ? Colors.amber // or your desired filled color
               : Colors.grey, // or your desired outline color

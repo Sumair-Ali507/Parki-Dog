@@ -22,7 +22,9 @@ import '../../../lang/lang_state.dart';
 import '../widgets/dog_add_photo.dart';
 
 class FillDogScreen extends StatefulWidget {
-  const FillDogScreen({super.key});
+  const FillDogScreen({super.key, required this.password});
+
+  final String password;
 
   @override
   State<FillDogScreen> createState() => _FillDogScreenState();
@@ -114,7 +116,7 @@ class _FillDogScreenState extends State<FillDogScreen> {
             }
           },
           child: PushButton(
-            text: 'Next'.tr(),
+            text: 'Done'.tr(),
             onPress: () => _onNextPressed(context),
           ),
         ),
@@ -265,10 +267,15 @@ class _FillDogScreenState extends State<FillDogScreen> {
 
       // Save dog data to cubit
       context.read<AuthCubit>().tempDogData = dog;
+      // context
+      //     .read<AuthCubit>()
+      //     .signUp(context.read<AuthCubit>().tempUserModel!, widget.password);
+      AuthCubit()
+          .signUp(context.read<AuthCubit>().tempUserModel!, widget.password);
 
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const HomeScreen(parks: [])),
-          (Route<dynamic> route) => false);
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute(builder: (context) => const HomeScreen(parks: [])),
+      //     (Route<dynamic> route) => false);
     }
   }
 }

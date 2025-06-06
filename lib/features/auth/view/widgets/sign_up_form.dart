@@ -138,22 +138,26 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Future<void> _onSignUpPressed(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const FillUserTypeScreen()));
-      // _formKey.currentState!.save();
+      _formKey.currentState!.save();
 
-      // final email = _formKey.currentState!.fields['Email']!.value;
-      // final password = _formKey.currentState!.fields['Password']!.value;
+      final email = _formKey.currentState!.fields['Email']!.value;
+      final password = _formKey.currentState!.fields['Password']!.value;
       // final firstName = _formKey.currentState!.fields['First Name']!.value;
       // final lastName = _formKey.currentState!.fields['Last Name']!.value;
 
-      // final UserModel user = UserModel(
-      //   email: email,
-      //   firstName: firstName,
-      //   lastName: lastName,
-      // );
+      final UserModel user = UserModel(
+        email: email,
+      );
 
-      // await context.read<AuthCubit>().signUp(user, password);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FillUserTypeScreen(
+                    userModel: user,
+                    password: password,
+                  )));
+
+      await context.read<AuthCubit>().signUp(user, password);
     }
   }
 }

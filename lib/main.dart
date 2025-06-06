@@ -24,6 +24,7 @@ import 'package:parki_dog/generated/codegen_loader.g.dart';
 import 'firebase_options.dart';
 
 final notificationService = NotificationService();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -80,24 +81,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthCubit>(create: (context) => AuthCubit()),
-        BlocProvider<LocationCubit>(create: (context) => LocationCubit()),
-        BlocProvider<HomeCubit>(create: (context) => HomeCubit()),
-        BlocProvider<ShopCubit>(create: (context) => ShopCubit()),
-        BlocProvider<ChatCubit>(create: (context) => ChatCubit()),
-        BlocProvider<AccountCubit>(create: (context) => AccountCubit()),
-        BlocProvider<LangCubit>(create: (context) => LangCubit()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Parki Dog',
-        localizationsDelegates: context.localizationDelegates,
-        supportedLocales: context.supportedLocales,
-        locale: context.locale,
-        theme: AppThemeData.lightTheme,
-        onGenerateRoute: _appRouter.onGenerateRoute,
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthCubit>(create: (context) => AuthCubit()),
+          BlocProvider<LocationCubit>(create: (context) => LocationCubit()),
+          BlocProvider<HomeCubit>(create: (context) => HomeCubit()),
+          BlocProvider<ShopCubit>(create: (context) => ShopCubit()),
+          BlocProvider<ChatCubit>(create: (context) => ChatCubit()),
+          BlocProvider<AccountCubit>(create: (context) => AccountCubit()),
+          BlocProvider<LangCubit>(create: (context) => LangCubit()),
+        ],
+        child: MaterialApp(
+            navigatorKey: navigatorKey,
+          debugShowCheckedModeBanner: false,
+          title: 'Parki Dog',
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
+          theme: AppThemeData.lightTheme,
+          onGenerateRoute: _appRouter.onGenerateRoute,
+        ),
       ),
     );
   }

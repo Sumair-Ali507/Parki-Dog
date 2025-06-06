@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:parki_dog/core/animations/zig_zag_animation.dart';
 import 'package:parki_dog/core/services/location/cubit/location_cubit.dart';
 import 'package:parki_dog/core/services/preferences/preferences_service.dart';
 import 'package:parki_dog/features/auth/cubit/auth_cubit.dart';
@@ -13,11 +14,18 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSplashScreen.withScreenRouteFunction(
-      splash: Hero(
-        tag: 'logopur2',
-        child: SvgPicture.asset(
-          'assets/images/logo-pure.svg',
-        ),
+      splash: Stack(
+        children: [
+          ZigzagAnimation(),
+          Center(
+            child: Hero(
+              tag: 'logopur2',
+              child: SvgPicture.asset(
+                'assets/images/logo-pure.svg',
+              ),
+            ),
+          ),
+        ],
       ),
       splashIconSize: MediaQuery.of(context).size.width * 0.6,
       screenRouteFunction: () async {

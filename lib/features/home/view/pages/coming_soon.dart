@@ -63,40 +63,38 @@ class ComingSooon extends StatelessWidget {
           runSpacing: AppDouble.d16,
           children: List.generate(
               comingSoonItems.length,
-                  (index) => SizedBox(
-                height: AppDouble.d218,
-               width: 175,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                    width: 175,
-                      child: ClipRRect(
-                          borderRadius:
-                          BorderRadius.circular(AppDouble.d16),
-                          child: ColorFiltered(
-                              colorFilter: ColorFilter.mode(
-                                  ColorsManager.black
-                                      .withOpacity(AppDouble.d0_35),
-                                  BlendMode.darken),
-                              child: Image.asset(
-                                  comingSoonItems[index]['image'],
-                                  fit: BoxFit.cover))),
+              (index) => SizedBox(
+                    height: AppDouble.d218,
+                    width: 145,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 175,
+                          child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.circular(AppDouble.d16),
+                              child: ColorFiltered(
+                                  colorFilter: ColorFilter.mode(
+                                      ColorsManager.black
+                                          .withOpacity(AppDouble.d0_35),
+                                      BlendMode.darken),
+                                  child: Image.asset(
+                                      comingSoonItems[index]['image'],
+                                      fit: BoxFit.cover))),
+                        ),
+                        Center(
+                          child: Text(comingSoonItems[index]['title'],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: AppDouble.d22,
+                                color: ColorsManager.white,
+                                fontWeight: FontWeight.bold,
+                              )).tr(),
+                        )
+                      ],
                     ),
-                    Center(
-                      child: Text(comingSoonItems[index]['title'],
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: AppDouble.d22,
-                            color: ColorsManager.white,
-                            fontWeight: FontWeight.bold,
-
-                          ))
-                          .tr(),
-                    )
-                  ],
-                ),
-              )),
+                  )),
         ),
         const SizedBox(height: AppDouble.d32),
       ],

@@ -36,6 +36,7 @@ class PushButton extends StatelessWidget {
     return GestureDetector(
       onTap: autoCheckPress,
       child: ElevatedButton(
+      
         onPressed: onPress,
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(

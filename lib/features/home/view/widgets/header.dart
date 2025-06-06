@@ -31,13 +31,17 @@ class HomeAppBar extends StatelessWidget {
         Row(
           children: [
             HomeAppBarIcon(
-              onTap: ()=> AllUserChatsScreen(),
+              onTap: () {
+                chatOnTap!();
+              },
               svgAssetName: ImageAssets.chatBubbles,
               isRedCircle: isRedCircleChat,
             ),
-             SizedBox(width: AppDouble.d8),
+            SizedBox(width: AppDouble.d8),
             HomeAppBarIcon(
-              onTap: ()=> NotificationService(),
+              onTap: () {
+                notificationOnTap!();
+              },
               svgAssetName: ImageAssets.notification,
               isRedCircle: isRedCircleNotification,
             ),

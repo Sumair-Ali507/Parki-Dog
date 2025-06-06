@@ -4,7 +4,12 @@ import 'package:parki_dog/core/theme/app_colors.dart';
 import 'package:parki_dog/core/theme/icons/custom_icons.dart';
 
 class MapMarker extends StatelessWidget {
-  const MapMarker({super.key, required this.name, this.numberOfDogs, required this.zoom, this.checkedIn});
+  const MapMarker(
+      {super.key,
+      required this.name,
+      this.numberOfDogs,
+      required this.zoom,
+      this.checkedIn});
   final bool? checkedIn;
   final String name;
   final int? numberOfDogs;
@@ -19,7 +24,7 @@ class MapMarker extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
-            'assets/images/icon-max.png',
+            'assets/images/logo.png',
             width: 40,
           ),
           zoom > 13.5
@@ -29,7 +34,10 @@ class MapMarker extends StatelessWidget {
                     Center(
                       child: Text(
                         name,
-                        style: const TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w500),
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w500),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -41,7 +49,8 @@ class MapMarker extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           '${numberOfDogs ?? 0} ${'dogs'.tr()}',
-                          style: const TextStyle(fontSize: 12, color: AppColors.primary),
+                          style: const TextStyle(
+                              fontSize: 12, color: AppColors.primary),
                         ),
                       ],
                     ),
