@@ -18,100 +18,104 @@ class AllUserChatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LangCubit, LangState>(builder: (context, state) {
       return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          automaticallyImplyLeading: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.pop(context),
-          ),
-          elevation: 0,
-          title: Text(
-            'All Chats'.tr(),
-            style: const TextStyle(
-              fontSize: 24,
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              onPressed: () => Navigator.pop(context),
+            ),
+            elevation: 0,
+            title: Text(
+              'All Chats'.tr(),
+              style: const TextStyle(
+                fontSize: 24,
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
-        body: StreamBuilder(
-          stream: ChatRepository.db.collection('chat').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              return ListView.builder(
-                itemCount: ChatCubit.get(context).friendsData.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) => StreamBuilder(
-                  stream: ChatRepository.db
-                      .collection('chat')
-                      .doc(ChatCubit.get(context).chatDocumentPaths[index])
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    ChatRepository.getAllUserChats(context);
-                    return BlocBuilder<ChatCubit, ChatState>(
-                      builder: (context, state) {
-                        return ChatCubit.get(context).allChatList.isEmpty
-                            ? const SizedBox()
-                            : ListTile(
-                                contentPadding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-                                onTap: () {
-                                  ChatRepository.findDocumentPath(
-                                          idFrom: GetIt.instance.get<UserModel>().id!,
-                                          idTo: ChatCubit.get(context).friendsIds[index])
-                                      .whenComplete(
-                                    () => Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => ChatScreen(
-                                          fromId: GetIt.instance.get<UserModel>().id!,
-                                          toId: ChatCubit.get(context).friendsIds[index],
-                                          friendName: ChatCubit.get(context).friendsData[index].firstName!,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                subtitle: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      child: Text(
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          ChatCubit.get(context).allChatList[index].last.text),
-                                    ),
-                                    SizedBox(
-                                      child: Text(
-                                        ChatRepository.formatTimestampString(
-                                            ChatCubit.get(context).allChatList[index].last.timeStamp),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                leading: Avatar(ChatCubit.get(context).friendsData[index].photoUrl),
-                                title: Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Text(
-                                    ChatCubit.get(context).friendsData[index].firstName!,
-                                    style: const TextStyle(fontWeight: FontWeight.w800),
-                                  ),
-                                ),
-                              );
-                      },
-                    );
-                  },
-                ),
-              );
-            }
-          },
-        ),
-      );
+          body: Center(
+            child: Image.asset('assets/new-images/no-chat.png'),
+          )
+
+          // StreamBuilder(
+          //   stream: ChatRepository.db.collection('chat').snapshots(),
+          //   builder: (context, snapshot) {
+          //     if (snapshot.connectionState == ConnectionState.waiting) {
+          //       return const Center(
+          //         child: CircularProgressIndicator(),
+          //       );
+          //     } else {
+          //       return ListView.builder(
+          //         itemCount: ChatCubit.get(context).friendsData.length,
+          //         shrinkWrap: true,
+          //         itemBuilder: (context, index) => StreamBuilder(
+          //           stream: ChatRepository.db
+          //               .collection('chat')
+          //               .doc(ChatCubit.get(context).chatDocumentPaths[index])
+          //               .snapshots(),
+          //           builder: (context, snapshot) {
+          //             ChatRepository.getAllUserChats(context);
+          //             return BlocBuilder<ChatCubit, ChatState>(
+          //               builder: (context, state) {
+          //                 return ChatCubit.get(context).allChatList.isEmpty
+          //                     ? const SizedBox()
+          //                     : ListTile(
+          //                         contentPadding: const EdgeInsets.only(top: 15, left: 20, right: 20),
+          //                         onTap: () {
+          //                           ChatRepository.findDocumentPath(
+          //                                   idFrom: GetIt.instance.get<UserModel>().id!,
+          //                                   idTo: ChatCubit.get(context).friendsIds[index])
+          //                               .whenComplete(
+          //                             () => Navigator.of(context).push(
+          //                               MaterialPageRoute(
+          //                                 builder: (context) => ChatScreen(
+          //                                   fromId: GetIt.instance.get<UserModel>().id!,
+          //                                   toId: ChatCubit.get(context).friendsIds[index],
+          //                                   friendName: ChatCubit.get(context).friendsData[index].firstName!,
+          //                                 ),
+          //                               ),
+          //                             ),
+          //                           );
+          //                         },
+          //                         subtitle: Row(
+          //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //                           children: [
+          //                             SizedBox(
+          //                               child: Text(
+          //                                   overflow: TextOverflow.ellipsis,
+          //                                   maxLines: 1,
+          //                                   ChatCubit.get(context).allChatList[index].last.text),
+          //                             ),
+          //                             SizedBox(
+          //                               child: Text(
+          //                                 ChatRepository.formatTimestampString(
+          //                                     ChatCubit.get(context).allChatList[index].last.timeStamp),
+          //                                 overflow: TextOverflow.ellipsis,
+          //                                 maxLines: 1,
+          //                               ),
+          //                             )
+          //                           ],
+          //                         ),
+          //                         leading: Avatar(ChatCubit.get(context).friendsData[index].photoUrl),
+          //                         title: Padding(
+          //                           padding: const EdgeInsets.only(bottom: 10),
+          //                           child: Text(
+          //                             ChatCubit.get(context).friendsData[index].firstName!,
+          //                             style: const TextStyle(fontWeight: FontWeight.w800),
+          //                           ),
+          //                         ),
+          //                       );
+          //               },
+          //             );
+          //           },
+          //         ),
+          //       );
+          //     }
+          //   },
+          // ),
+          );
     });
   }
 }

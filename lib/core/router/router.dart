@@ -13,6 +13,8 @@ import 'package:parki_dog/features/account/view/pages/edit_personal_info_screen.
 import 'package:parki_dog/features/account/view/pages/edit_sociability_screen.dart';
 import 'package:parki_dog/features/account/view/pages/friends_screen.dart';
 import 'package:parki_dog/features/account/view/pages/personal_info_screen.dart';
+import 'package:parki_dog/features/account/view/pages/setting_screen.dart';
+import 'package:parki_dog/features/account/view/pages/sign_in_and_security_screen.dart';
 import 'package:parki_dog/features/auth/view/pages/fill_user_type_screen.dart';
 import 'package:parki_dog/features/auth/view/pages/terms_view.dart';
 import 'package:parki_dog/features/auth/data/dog_model.dart';
@@ -46,6 +48,12 @@ class AppRouter {
       case '/':
         // return MaterialPageRoute(builder: (_) => const FillUserTypeScreen());
         return MaterialPageRoute(builder: (_) => const SplashScreen());
+      case '/profile/app_language':
+        // return MaterialPageRoute(builder: (_) => const FillUserTypeScreen());
+        return MaterialPageRoute(builder: (_) => const SettingScreen());
+      case '/profile/sign-in_and_security':
+        // return MaterialPageRoute(builder: (_) => const FillUserTypeScreen());
+        return MaterialPageRoute(builder: (_) => const SignInSecurityScreen());
 
       case '/auth/login':
         return MaterialPageRoute(builder: (_) => const LoginScreen());

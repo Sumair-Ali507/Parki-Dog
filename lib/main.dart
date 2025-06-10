@@ -10,6 +10,7 @@ import 'package:parki_dog/core/services/location/cubit/location_cubit.dart';
 import 'package:parki_dog/core/services/notifiactions/notification_service.dart';
 import 'package:parki_dog/core/services/preferences/preferences_service.dart';
 import 'package:parki_dog/core/theme/app_theme_data.dart';
+import 'package:parki_dog/core/utils/themes_manager.dart';
 import 'package:parki_dog/features/account/cubit/account_cubit.dart';
 import 'package:parki_dog/features/auth/cubit/auth_cubit.dart';
 import 'package:parki_dog/features/home/cubit/home_cubit.dart';
@@ -96,13 +97,13 @@ class MyApp extends StatelessWidget {
           BlocProvider<LangCubit>(create: (context) => LangCubit()),
         ],
         child: MaterialApp(
-            navigatorKey: navigatorKey,
+          navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: false,
           title: 'Parki Dog',
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
-          theme: AppThemeData.lightTheme,
+          theme: getApplicationTheme(),
           onGenerateRoute: _appRouter.onGenerateRoute,
         ),
       ),

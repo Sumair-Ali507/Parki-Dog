@@ -7,6 +7,7 @@ import 'package:parki_dog/core/services/notifiactions/notification_service.dart'
 import 'package:parki_dog/core/theme/app_colors.dart';
 import 'package:parki_dog/features/auth/data/auth_repository.dart';
 import 'package:parki_dog/features/chat/view/page/show_user_chats.dart';
+import 'package:parki_dog/features/home/cubit/home_cubit.dart';
 import 'package:parki_dog/features/home/data/park_model.dart';
 import 'package:parki_dog/features/home/view/pages/coming_soon.dart';
 import 'package:parki_dog/features/home/view/pages/tell_feeback.dart';
@@ -15,9 +16,11 @@ import 'package:parki_dog/features/home/view/widgets/doggy_shoppy.dart';
 import 'package:parki_dog/features/home/view/widgets/header.dart';
 import 'package:parki_dog/features/home/view/widgets/our_mission_screen.dart';
 import 'package:parki_dog/features/home/view/widgets/parks_nearby.dart';
+import 'package:parki_dog/features/notifications/pages/notifications_screen.dart';
 import 'package:parki_dog/features/shop/cubit/shop_cubit.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
+import '../../../../core/services/location/cubit/location_cubit.dart';
 import '../../../../core/utils/colors_manager.dart';
 import '../../../../core/utils/text_styles.dart';
 import '../../../../core/utils/values_manager.dart';
@@ -91,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => AllUserChatsScreen(),
+                            builder: (_) => NotificationsScreen(),
                           ),
                         );
                       },
@@ -99,16 +102,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       isRedCircleNotification: true,
                     ),
 
-                    const SizedBox(height: AppDouble.d32),
-                    TodaysActivitiesWidget(events: events),
+                    const SizedBox(height: AppDouble.d12),
+                    HowWorksMissionRow(howWorks: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HowWorksScreen()));
+                    }, missionOnTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => OurMissionScreen()));
+                    }),
+                    // TodaysActivitiesWidget(events: events),
                     // const SizedBox(height: AppDouble.d32),
                     const CurrentCheckIn(),
                     NearbyPlacesWidget(places: places),
-                    ShopSectionWidget(),
-                    AdventuresSectionWidget(),
-                    SuggestedSectionWidget(),
-                    TopTrainersSectionWidget(),
-                    AdoptionSectionWidget(),
+                    // ShopSectionWidget(),
+                    // AdventuresSectionWidget(),
+                    // SuggestedSectionWidget(),
+                    // TopTrainersSectionWidget(),
+                    // AdoptionSectionWidget(),
+
                     // const SizedBox(height: 16),
                     // const DoggyShoppy(),
                     // const DoggyShoppyWidget(),
@@ -900,6 +915,8 @@ class NearbyPlacesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final location = context.watch<LocationCubit>().location;
+
     return Column(
       children: [
         Row(
@@ -948,113 +965,152 @@ class NearbyPlacesWidget extends StatelessWidget {
         SizedBox(
           height: 8.h,
         ),
-        Column(
-          children: [
-            ListView.builder(
-                padding: EdgeInsets.only(top: 16.h),
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: 3,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: BoxDecoration(shape: BoxShape.circle),
-                            width: 42,
-                            height: 42,
-                            child: Image.network(
-                                fit: BoxFit.cover,
-                                'https://media.istockphoto.com/id/597939586/photo/group-of-little-trees-growing-in-garden.jpg?s=612x612&w=0&k=20&c=n0wT9OksXbQoFmiBO4Z3dIPYjd1X5o3foJDJvjlhQxE='),
-                          ),
-                          SizedBox(
-                            width: 8.w,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+        BlocBuilder<HomeCubit, HomeState>(
+            bloc: context.read<HomeCubit>()..getNearbyParks(location),
+            builder: (context, state) {
+              if (state is NearbyParksLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is NearbyParksLoaded) {
+                final parks = state.parks;
+                return Column(
+                  children: [
+                    ListView.builder(
+                        padding: EdgeInsets.only(top: 16.h),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: parks.length,
+                        itemBuilder: (context, index) {
+                          return Column(
                             children: [
-                              Text(
-                                'Monte Orlando',
-                              ),
-                              SizedBox(
-                                height: 4.h,
-                              ),
                               Row(
                                 children: [
-                                  SvgPicture.asset(
-                                      'assets/images/icons/locationPin.svg'),
+                                  Container(
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration:
+                                        BoxDecoration(shape: BoxShape.circle),
+                                    width: 42,
+                                    height: 42,
+                                    child: Image.network(
+                                        fit: BoxFit.cover,
+                                        parks[index].photoUrl.toString()),
+                                  ),
                                   SizedBox(
-                                    width: 2.5,
+                                    width: 8.w,
                                   ),
-                                  Text(
-                                    '1.5km away',
-                                    style: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: Color(0xFF5D5C64)),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width: 0.5.sw,
+                                        child: Expanded(
+                                          child: Text(
+                                            parks[index].name.toString(),
+                                            style: TextStyle(
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 4.h,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                              'assets/images/icons/locationPin.svg'),
+                                          SizedBox(
+                                            width: 2.5,
+                                          ),
+                                          Text(
+                                            '15km away',
+                                            style: TextStyle(
+                                                fontSize: 14.sp,
+                                                color: Color(0xFF5D5C64)),
+                                          ),
+                                          Text(
+                                            ' \u2022 ',
+                                            style: TextStyle(
+                                              fontSize: 14.sp,
+                                              color: Color(0xFF5D5C64),
+                                            ),
+                                          ),
+                                          SvgPicture.asset(
+                                            'assets/icons/paw.svg',
+                                            width: 16,
+                                            height: 16,
+                                            color: Color(0xFF5D5C64),
+                                          ),
+                                          Text(
+                                            parks[index]
+                                                .numberOfDogs
+                                                .toString(),
+                                            style: TextStyle(
+                                              fontSize: 14.sp,
+                                              color: Color(0xFF5D5C64),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
                                   ),
-                                  Text(
-                                    ' \u2022 ',
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: Color(0xFF5D5C64),
-                                    ),
-                                  ),
-                                  SvgPicture.asset(
-                                    'assets/icons/paw.svg',
-                                    width: 16,
-                                    height: 16,
-                                    color: Color(0xFF5D5C64),
-                                  ),
-                                  Text(
-                                    ' 2 dogs ',
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: Color(0xFF5D5C64),
-                                    ),
-                                  ),
+                                  Spacer(),
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Row(
+                                        children: List.generate(5, (i) {
+                                          return SvgPicture.asset(
+                                            i < parks[index].rating!.round()
+                                                ? 'assets/icons/bone-filled.svg'
+                                                : 'assets/icons/bone.svg',
+                                            width: 16,
+                                            height: 16,
+                                          );
+                                        }),
+                                      ),
+                                      SizedBox(
+                                        height: 4.h,
+                                      ),
+                                      Text(
+                                        '(${parks[index].reviews?.length ?? 0} reviews)',
+                                        style: TextStyle(
+                                            fontSize: 9.sp,
+                                            fontWeight: FontWeight.w300,
+                                            color: Color(0xFF5D5C64)),
+                                      )
+                                    ],
+                                  )
                                 ],
-                              )
-                            ],
-                          ),
-                          Spacer(),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Row(
-                                children: List.generate(5, (index) {
-                                  return SvgPicture.asset(
-                                    'assets/icons/bone-filled.svg',
-                                  );
-                                }),
                               ),
                               SizedBox(
-                                height: 4.h,
+                                height: 8.h,
                               ),
-                              Text(
-                                '(12 reviews)',
-                                style: TextStyle(
-                                    fontSize: 9.sp,
-                                    fontWeight: FontWeight.w300,
-                                    color: Color(0xFF5D5C64)),
-                              )
+                              Divider(
+                                color: Color(0xFF5D5C64).withOpacity(0.2),
+                              ),
                             ],
-                          )
-                        ],
+                          );
+                        })
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        'No nearby parks'.tr(),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, color: Colors.grey),
                       ),
-                      SizedBox(
-                        height: 8.h,
-                      ),
-                      Divider(
-                        color: Color(0xFF5D5C64).withOpacity(0.2),
-                      ),
-                    ],
-                  );
-                })
-          ],
-        ),
+                    ),
+                  ],
+                );
+              }
+            })
       ],
     );
   }

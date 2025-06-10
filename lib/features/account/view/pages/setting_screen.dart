@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../lang/lang_cubit.dart';
 import '../../../lang/lang_state.dart';
@@ -12,7 +13,9 @@ class SettingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LangCubit, LangState>(builder: (context, state) {
       return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: Text('Change Language'),
+        ),
         body: ListView(
           children: [
             const SizedBox(
@@ -27,8 +30,11 @@ class SettingScreen extends StatelessWidget {
                     context.read<LangCubit>().changeLang('en', context);
                   }),
             ),
-            const SizedBox(
-              height: 50,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Divider(
+                color: Colors.black12,
+              ),
             ),
             ListTile(
               title: const Text('italiano'),

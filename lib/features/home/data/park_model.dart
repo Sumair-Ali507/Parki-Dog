@@ -20,6 +20,7 @@ class ParkModel {
   double? rating;
   int? userRatingsTotal;
   int numberOfDogs;
+  String? address;
 
   ParkModel({
     this.id,
@@ -33,6 +34,7 @@ class ParkModel {
     this.rating,
     this.userRatingsTotal,
     this.numberOfDogs = 0,
+    this.address,
   });
 
   ParkModel copyWith({

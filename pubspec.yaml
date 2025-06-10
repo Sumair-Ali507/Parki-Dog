@@ -72,11 +72,12 @@ dependencies:
   auto_size_text: ^3.0.0
   timeline_tile: ^2.0.0
   wheel_picker: ^0.2.1
+  timeago: ^3.7.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  # flutter_lints: ^5.0.0
 
 flutter:
   # The following line ensures that the Material Icons font is

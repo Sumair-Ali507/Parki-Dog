@@ -9,41 +9,42 @@ class Carousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 200,
-          child: PageView.builder(
-            controller: _controller,
-            itemCount: photoUrls.length,
-            itemBuilder: (_, index) => Container(
-              margin: EdgeInsets.symmetric(
-                  horizontal: photoUrls.length > 1 ? 8 : 0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: Image.network(
-                photoUrls[index] ?? '',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Image.asset('assets/images/dog placeholder.png'),
+    return SafeArea(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 200,
+            child: PageView.builder(
+              controller: _controller,
+              itemCount: photoUrls.length,
+              itemBuilder: (_, index) => Container(
+                margin: EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                    // borderRadius: BorderRadius.circular(16),
+                    ),
+                clipBehavior: Clip.hardEdge,
+                child: Image.network(
+                  photoUrls[index] ?? '',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Image.asset('assets/images/dog placeholder.png'),
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        SmoothPageIndicator(
-          controller: _controller,
-          count: photoUrls.length,
-          effect: const ExpandingDotsEffect(
-            dotHeight: 8,
-            dotWidth: 8,
-            dotColor: Color(0xffB0B2B0),
-            activeDotColor: Color(0xffB0B2B0),
+          const SizedBox(height: 8),
+          SmoothPageIndicator(
+            controller: _controller,
+            count: photoUrls.length,
+            effect: const ExpandingDotsEffect(
+              dotHeight: 8,
+              dotWidth: 8,
+              dotColor: Color(0xffB0B2B0),
+              activeDotColor: Color(0xffB0B2B0),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

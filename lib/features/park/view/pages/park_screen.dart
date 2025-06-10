@@ -11,6 +11,7 @@ import 'package:maps_launcher/maps_launcher.dart';
 import 'package:parki_dog/core/services/location/cubit/location_cubit.dart';
 import 'package:parki_dog/core/theme/app_colors.dart';
 import 'package:parki_dog/core/theme/icons/custom_icons.dart';
+import 'package:parki_dog/core/utils/values_manager.dart';
 import 'package:parki_dog/core/widgets/push_button.dart';
 import 'package:parki_dog/features/auth/data/dog_model.dart';
 import 'package:parki_dog/features/auth/view/widgets/link_button.dart';
@@ -21,6 +22,7 @@ import 'package:parki_dog/features/park/cubit/park_cubit.dart';
 import 'package:parki_dog/features/park/view/widgets/carousel.dart';
 import 'package:parki_dog/features/park/view/widgets/check_in_check_out.dart';
 import 'package:parki_dog/features/park/view/widgets/checked_in_dogs.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../lang/lang_cubit.dart';
 import '../../../lang/lang_state.dart';
@@ -73,9 +75,11 @@ class ParkScreen extends StatelessWidget {
           if (park != null) {
             return BlocBuilder<LangCubit, LangState>(builder: (context, state) {
               return Scaffold(
+                appBar: AppBar(),
                 body: SingleChildScrollView(
                   child: Center(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Carousel(photoUrls: parkImageList ?? [park!.photoUrl]),
                         const SizedBox(height: 16),
@@ -115,7 +119,7 @@ class ParkScreen extends StatelessWidget {
                                   Column(
                                     children: [
                                       Text(
-                                        'Safe in 3 hours',
+                                        'Safe',
                                         style: TextStyle(
                                             color: Color(0xFFA00000),
                                             fontSize: 12.sp,
@@ -162,7 +166,7 @@ class ParkScreen extends StatelessWidget {
                                   Text(
                                     '17m by by bus',
                                     style: const TextStyle(
-                                        fontSize: 14, color: Colors.black87),
+                                        fontSize: 12, color: Colors.black87),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -182,7 +186,7 @@ class ParkScreen extends StatelessWidget {
                                         ),
                                         Expanded(
                                           child: Text(
-                                            'Attaka, Suez Governorate..',
+                                            park!.address ?? '',
                                             style: TextStyle(
                                                 overflow:
                                                     TextOverflow.ellipsis),
@@ -244,172 +248,85 @@ class ParkScreen extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 0.85.sw,
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icons/paw.svg',
-                                          colorFilter: ColorFilter.mode(
-                                              Colors.black, BlendMode.srcIn),
-                                        ),
-                                        SizedBox(width: 4.w),
-                                        Text(
-                                          'Checked-in',
-                                          style: TextStyle(),
-                                        ),
-                                        Spacer(),
-                                        Text(
-                                          dogs != null
-                                              ? dogs!.length.toString()
-                                              : '0',
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
                             ],
                           ),
                         ),
                         Divider(
                           color: Colors.black12,
                         ),
+                        Container(
+                          margin: EdgeInsets.only(left: 16.w),
+                          child: const Text(
+                            'Recent Check-Ins',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(height: AppDouble.d8),
                         SizedBox(
                           height: 300,
                           child: ListView.builder(
-                              itemCount: 6,
+                              itemCount: result!.reviews?.length ?? 0,
                               itemBuilder: (context, index) {
-                                return Container(
-                                  margin: EdgeInsets.all(16.h),
-                                  child: Column(
+                                return ListTile(
+                                  leading: CircleAvatar(
+                                    radius: 20,
+                                    backgroundImage: NetworkImage(result!
+                                            .reviews?[index].profilePhotoUrl ??
+                                        ''),
+                                    onBackgroundImageError: (_, __) {
+                                      print(
+                                          'Failed to load profile image for ${result!.reviews?[index].authorName}');
+                                    },
+                                  ),
+                                  title: Text(
+                                      result!.reviews?[index].authorName ?? ''),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 60.w,
-                                            height: 45.h,
-                                            child: Stack(
-                                              children: [
-                                                Container(
-                                                  clipBehavior: Clip.hardEdge,
-                                                  width: 40.w,
-                                                  height: 40.h,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: Image.network(
-                                                    'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?cs=srgb&dl=pexels-italo-melo-881954-2379004.jpg&fm=jpg',
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                                Positioned(
-                                                  top: 10,
-                                                  left: 25,
-                                                  child: Container(
-                                                    clipBehavior: Clip.hardEdge,
-                                                    width: 32.w,
-                                                    height: 32.h,
-                                                    decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                            color: Colors.white,
-                                                            width: 2)),
-                                                    child: ClipOval(
-                                                      child: Image.network(
-                                                        'https://hips.hearstapps.com/clv.h-cdn.co/assets/16/18/gettyimages-586890581.jpg?crop=0.668xw:1.00xh;0.219xw,0&resize=980:*',
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                        children: List.generate(
+                                          5,
+                                          (i) => Icon(
+                                            i < (result?.reviews?.length ?? 0)
+                                                ? Icons.star
+                                                : Icons.star_border,
+                                            color: Colors.yellow,
+                                            size: 16,
                                           ),
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text('Afzal Khan'),
-                                                  SizedBox(
-                                                    width: 4.w,
-                                                  ),
-                                                  Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 4.h,
-                                                            horizontal: 8.w),
-                                                    width: 40.w,
-                                                    height: 25.h,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8.r),
-                                                      color: Color(0xFFEDFCF2),
-                                                    ),
-                                                    child: Center(
-                                                      child: Text(
-                                                        'Safe',
-                                                        style: TextStyle(
-                                                            fontSize: 9.sp,
-                                                            color: Color(
-                                                                0xFF099250)),
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 4.h,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  SvgPicture.asset(
-                                                      'assets/new-images/woman.svg'),
-                                                  Text(
-                                                    'Labrador Retriver',
-                                                    style: TextStyle(
-                                                      fontSize: 12.sp,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color: Color(0xFF808086),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          Spacer(),
-                                          Icon(
-                                            Icons.more_horiz,
-                                            color: Colors.black,
-                                          ),
-                                        ],
+                                        ),
                                       ),
-                                      Divider(
-                                        color: Colors.black12,
-                                      ),
+                                      Text(result?.reviews?[index].text ?? ''),
+                                      Text(
+                                        timeago.format(
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                            int.parse(result!
+                                                    .reviews![index].time
+                                                    .toString()) *
+                                                1000,
+                                          ),
+                                        ),
+                                      )
                                     ],
                                   ),
+                                  trailing: const Text('Safe'),
                                 );
                               }),
                         ),
-                        Container(
-                          margin: EdgeInsets.all(16.sp),
-                          width: 1.sw,
-                          child: Expanded(
-                            child: CheckInCheckOut(
-                                park: park!,
-                                dogs: dogs!,
-                                checkIn: checkIn,
-                                checkOut: checkOut),
-                          ),
-                        ),
                       ],
                     ),
+                  ),
+                ),
+                bottomNavigationBar: Container(
+                  margin: EdgeInsets.all(16.sp),
+                  width: 1.sw,
+                  child: Expanded(
+                    child: CheckInCheckOut(
+                        park: park!,
+                        dogs: dogs!,
+                        checkIn: checkIn,
+                        checkOut: checkOut),
                   ),
                 ),
               );

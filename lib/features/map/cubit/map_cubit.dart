@@ -135,21 +135,28 @@ class MapCubit extends Cubit<MapState> {
             ];
             await parkDetails(parkId: park.id!)
                 .whenComplete(() async => await getAllParkImage())
-                .whenComplete(() => _navigationCubit.showBottomSheet(
-                      ParkScreen(() async {
-                        park.photoUrl ??= await GMapsService.getPlacePhoto(
-                            park.photoReference);
-                        return park;
-                      },
+                .whenComplete(
+                  () => Navigator.push(
+                      navigatorKey.currentContext!,
+                      MaterialPageRoute(
+                        builder: (context) => ParkScreen(
+                          () async {
+                            park.photoUrl ??= await GMapsService.getPlacePhoto(
+                                park.photoReference);
+                            return park;
+                          },
                           result: singleParkModel!.result!,
                           parkImageList: parkImageList,
                           checkIn: () async => await checkInPark(
                               position: gmaps.LatLng(park.location!.latitude,
                                   park.location!.longitude)),
                           checkOut: () async => await checkOutPark(
-                              position: gmaps.LatLng(park.location!.latitude,
-                                  park.location!.longitude))),
-                    ));
+                            position: gmaps.LatLng(park.location!.latitude,
+                                park.location!.longitude),
+                          ),
+                        ),
+                      )),
+                );
             loading = false;
             emit(EndBuildingPark());
           },

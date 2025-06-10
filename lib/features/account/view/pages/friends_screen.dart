@@ -48,7 +48,7 @@ class FriendsScreen extends StatelessWidget {
           bloc: context.read<AccountCubit>()..getFriends(friends),
           buildWhen: (previous, current) => current is FriendsLoaded,
           builder: (context, state) {
-            if (state is FriendsLoaded) {
+            if (state is FriendsLoaded && state.friends.isNotEmpty) {
               return ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: state.friends.length,
@@ -57,8 +57,12 @@ class FriendsScreen extends StatelessWidget {
                   return FriendTile(friend);
                 },
               );
+            } else {
+              return Center(
+                child: Image.asset('assets/new-images/high5.png'),
+              );
             }
-            return const Center(child: CircularProgressIndicator());
+            // return const Center(child: CircularProgressIndicator());
           },
         ),
       );

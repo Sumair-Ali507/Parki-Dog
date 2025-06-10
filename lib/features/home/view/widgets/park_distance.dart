@@ -22,7 +22,7 @@ class ParkDistance extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           '${(Utils.getDistance(userLocation, LatLng(parkLocation.latitude, parkLocation.longitude)) / 1000).toStringAsFixed(1)}km ${'away'.tr()}',
-          style: const TextStyle(fontSize: 14, color: Colors.black87),
+          style: const TextStyle(fontSize: 12, color: Colors.black87),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

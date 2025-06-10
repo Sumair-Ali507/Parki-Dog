@@ -6,7 +6,7 @@ TextStyle _getTextStyle(FontWeight fontWeight, double fontSize, Color color,
     {String fontFamily = FontConstants.poppinsFontFamily,
     TextDecoration decoration = TextDecoration.none}) {
   return TextStyle(
-      fontSize: fontSize.sp,
+      fontSize: fontSize,
       fontFamily: fontFamily,
       fontWeight: fontWeight,
       color: color,

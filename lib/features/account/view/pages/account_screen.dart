@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get_it/get_it.dart';
+import 'package:parki_dog/features/auth/data/user_model.dart';
 
 import '../../../lang/lang_cubit.dart';
 import '../../../lang/lang_state.dart';
@@ -11,23 +13,23 @@ class AccountScreen extends StatelessWidget {
 
   final List<Items> items = [
     Items(
-        name: 'Friends', icon: 'assets/images/icons/friends.svg', route: ''),
+        name: 'Friends',
+        icon: 'assets/images/icons/friends.svg',
+        route: '/account/friends'),
     Items(
-        name: 'My Orders',
-        icon: 'assets/images/icons/myOrders.svg',
-        route: ''),
+        name: 'My Orders', icon: 'assets/images/icons/myOrders.svg', route: ''),
     Items(
         name: 'Sign-in & Security',
         icon: 'assets/images/icons/signInAndSecurity.svg',
-        route: '/auth/terms'),
+        route: '/profile/sign-in_and_security'),
     Items(
         name: 'Terms & Conditions',
         icon: 'assets/images/icons/termsAndConditions.svg',
-        route: ''),
+        route: '/auth/terms'),
     Items(
         name: 'App Language',
         icon: 'assets/images/icons/globe.svg',
-        route: ''),
+        route: '/profile/app_language'),
   ];
 
   @override
@@ -44,84 +46,93 @@ class AccountScreen extends StatelessWidget {
               padding: EdgeInsets.all(16.sp),
               child: Column(
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(16.sp),
-                    width: 1.sw,
-                    height: 80.h,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.r),
-                        color: Color(0xFFF3F4F6)),
-                    child: SizedBox(
-                      width: 80.w,
-                      child: Row(
-                        children: [
-                          Stack(
-                            children: [
-                              Container(
-                                clipBehavior: Clip.hardEdge,
-                                width: 48.w,
-                                height: 48.h,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                ),
-                                child: ClipOval(
-                                  child: Image.network(
-                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-60IrBVsilxOXQqWSdZUN5nJjlhvdTUVqOQ&s',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 10,
-                                left: 20,
-                                child: Container(
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/account/my-info');
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(16.sp),
+                      width: 1.sw,
+                      height: 80.h,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                          color: Color(0xFFF3F4F6)),
+                      child: SizedBox(
+                        width: 80.w,
+                        child: Row(
+                          children: [
+                            Stack(
+                              children: [
+                                Container(
                                   clipBehavior: Clip.hardEdge,
-                                  width: 32.w,
-                                  height: 32.h,
+                                  width: 48.w,
+                                  height: 48.h,
                                   decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: Colors.white, width: 2)),
+                                    shape: BoxShape.circle,
+                                  ),
                                   child: ClipOval(
                                     child: Image.network(
-                                      'https://cdn.pixabay.com/photo/2015/11/17/13/13/puppy-1047521_1280.jpg',
+                                      GetIt.instance
+                                              .get<UserModel>()
+                                              .photoUrl ??
+                                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBvqzyx_zoi6q2c0Gd1XnE7wysD9PGOLe3-A&s',
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            width: 8.w,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Ahmed Nafee',
-                                style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Dog: Labrador Retriver',
-                                    style: TextStyle(
-                                        color: Color(0xFF808086),
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400),
+                                Positioned(
+                                  top: 10,
+                                  left: 20,
+                                  child: Container(
+                                    clipBehavior: Clip.hardEdge,
+                                    width: 32.w,
+                                    height: 32.h,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: Colors.white, width: 2)),
+                                    child: ClipOval(
+                                      child: Image.network(
+                                        'https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313_640.jpg',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
-                                  SizedBox(
-                                    width: 4.w,
-                                  ),
-                                  SvgPicture.asset('assets/new-images/man.svg')
-                                ],
-                              ),
-                            ],
-                          )
-                        ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              width: 8.w,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${GetIt.instance.get<UserModel>().firstName ?? ''} ${GetIt.instance.get<UserModel>().lastName ?? ''}',
+                                  style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Dog: ${GetIt.instance.get<UserModel>().ownedDogs?.first ?? ''}',
+                                      style: TextStyle(
+                                          color: Color(0xFF808086),
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    SizedBox(
+                                      width: 4.w,
+                                    ),
+                                    SvgPicture.asset(
+                                        'assets/new-images/man.svg')
+                                  ],
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -191,13 +202,13 @@ class MenuItemContainer extends StatelessWidget {
 }
 
 class Items {
-  Items( {
+  Items({
     required this.name,
     required this.icon,
     required this.route,
   });
   final String name, icon;
-  final String  route;
+  final String route;
 }
 
 // Column(
